@@ -7,7 +7,7 @@
 <meta http-equiv="Pragma" content="no-cache">
 <meta http-equiv="Expires" content="0">
 <title>元析智察</title>
-<!-- v6.10.43 导航文字强制可见防御（v6.11.0 新增策略分析模块 / v6.11.1 折线图纵轴自适应+数值标签）（防止预览面板/旧缓存导致文字不可见） -->
+<!-- v6.10.43 导航文字强制可见防御（v6.11.0 新增策略分析模块 / v6.11.1 折线图纵轴自适应+数值标签 / v6.12.0 新增人力数据模块）（防止预览面板/旧缓存导致文字不可见） -->
 <style>
 .nav-item,.nav-item *{color:var(--muted,#8b9bb5) !important;font-size:13.5px !important;visibility:visible !important;opacity:1 !important;overflow:visible !important;text-indent:0 !important;clip:auto !important}
 .nav-item.active,.nav-item.active *{color:var(--cyan,#22d3ee) !important;font-weight:600 !important}
@@ -1047,7 +1047,157 @@ body.theme-light .stScope .tag.new{color:var(--samber)}
 .stScope .alert-desc{font-size:12px;color:var(--ssub);margin-top:6px;line-height:1.7}
 @media print{.stScope .st-topbar{position:static}.stScope .sec{break-inside:avoid}}
 </style>
-</head>
+<style id="hrStyle">
+/* ==================== 人力数据（index-v2 集成）· #mod-hr 作用域变量 ==================== */
+#mod-hr{
+  --panel:#111d31; --panel2:#152238; --line:#1e2f4d; --line2:#24395c;
+  --ink:#e6edf7; --muted:#8b9bb5; --dim:#5c6c86; --cyan:#38bdf8;
+}
+body.theme-light #mod-hr{
+  --panel:#ffffff; --panel2:#f1f5f9; --line:#e2e8f0; --line2:#cbd5e1;
+  --ink:#0f172a; --muted:#475569; --dim:#94a3b8; --cyan:#0ea5e9;
+}
+#mod-hr .empty-state{padding:18px;text-align:center;color:var(--dim);font-size:13px}
+#mod-hr .empty-state .es-ic{font-size:22px;opacity:.6}
+#mod-hr .empty-state .es-t{margin-top:4px;font-weight:600}
+#mod-hr .empty-state .es-d{margin-top:2px;font-size:12px}
+#mod-hr .sec-no{display:inline-flex;align-items:center;justify-content:center;min-width:20px;height:20px;
+  padding:0 6px;border-radius:5px;font-size:11px;font-weight:700;border:1px solid var(--line);color:#fff}
+/* 深色底微调：浅色标签/斑马纹/胶囊在深底上降低亮度 */
+body:not(.theme-light) #mod-hr .hr-t tbody tr:nth-child(even) td{background:rgba(255,255,255,.028)}
+body:not(.theme-light) #mod-hr .hr-t tbody tr:hover td{background:rgba(56,189,248,.10)}
+body:not(.theme-light) #mod-hr .hr-tag.t-purple{background:rgba(168,85,247,.16);color:#c4b5fd}
+body:not(.theme-light) #mod-hr .hr-tag.t-cyan{background:rgba(34,211,238,.14);color:#67e8f9}
+body:not(.theme-light) #mod-hr .hr-tag.t-amber{background:rgba(245,158,11,.16);color:#fbbf24}
+body:not(.theme-light) #mod-hr .hr-tag.t-rose{background:rgba(244,63,94,.16);color:#fda4af}
+body:not(.theme-light) #mod-hr .hr-tag.t-indigo{background:rgba(129,140,248,.16);color:#a5b4fc}
+body:not(.theme-light) #mod-hr .pl{background:rgba(148,163,184,.14)}
+body:not(.theme-light) #mod-hr .pl.pn{background:rgba(244,63,94,.14);color:#fda4af;border-color:rgba(244,63,94,.32)}
+body:not(.theme-light) #mod-hr .pl.pt{background:rgba(56,189,248,.14);color:#7dd3fc;border-color:rgba(56,189,248,.32)}
+body:not(.theme-light) #mod-hr .hr-brief .hb-x b.up,body:not(.theme-light) #mod-hr .hr-note .up{color:#4ade80}
+body:not(.theme-light) #mod-hr .hr-brief .hb-x b.dn,body:not(.theme-light) #mod-hr .hr-note .dn{color:#f87171}
+body:not(.theme-light) #mod-hr .om-p.none,body:not(.theme-light) #mod-hr .og-l.none{color:#fb7185}
+body:not(.theme-light) #mod-hr .og-l{color:#67e8f9}
+/* HR-CSS-BEGIN */
+/* ===== 人力数据 · 视觉增强 ===== */
+.hr-sec{--sc:#3b82f6}
+.hr-sec>.sec-h{position:relative;padding-left:13px}
+.hr-sec>.sec-h:before{content:"";position:absolute;left:0;top:5px;bottom:5px;width:4px;border-radius:3px;background:var(--sc)}
+.hr-sec .sec-h .sec-no{background:var(--sc);color:#fff;border-color:transparent;box-shadow:0 2px 6px rgba(15,23,42,.14)}
+#hrKpis .kpi{border-radius:12px;overflow:hidden}
+#hrKpis .kpi:before{content:"";position:absolute;top:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--kc),transparent 78%);opacity:.85}
+#hrKpis .kpi:after{content:"";position:absolute;top:-34px;right:-34px;width:88px;height:88px;border-radius:50%;background:radial-gradient(circle,var(--kc) 0,transparent 70%);opacity:.10;pointer-events:none}
+#hrKpis .kpi:hover{transform:translateY(-2px);border-color:var(--kc);box-shadow:0 4px 14px rgba(15,23,42,.08)}
+#hrKpis .kpi .k-v{color:var(--kc)}
+#hrKpis .kpi .k-t:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--kc);display:inline-block;margin-right:2px}
+.hr-brief{display:flex;gap:12px;align-items:flex-start;margin:12px 0 14px;padding:13px 15px;border-radius:12px;border:1px solid var(--line);background:linear-gradient(100deg,rgba(59,130,246,.06),var(--panel) 60%);position:relative;overflow:hidden}
+.hr-brief .hb-ico{flex:0 0 auto;width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#3b82f6,#0ea5e9);position:relative}
+.hr-brief .hb-ico:after{content:"";position:absolute;left:8px;top:7px;width:9px;height:5px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg)}
+.hr-brief .hb-bd{min-width:0;flex:1}
+.hr-brief .hb-t{font-size:13px;font-weight:800;color:var(--ink);letter-spacing:.3px;margin-bottom:4px}
+.hr-brief .hb-x{font-size:12.5px;line-height:1.8;color:var(--muted)}
+.hr-brief .hb-x b{color:var(--ink);font-weight:700}
+.hr-brief .hb-x b.up,.hr-brief .hb-x .up{color:#16a34a}
+.hr-brief .hb-x b.dn,.hr-brief .hb-x .dn{color:#dc2626}
+.hr-brief.b-green{background:linear-gradient(100deg,rgba(34,197,94,.07),var(--panel) 60%)}
+.hr-brief.b-green .hb-ico{background:linear-gradient(135deg,#22c55e,#0ea5e9)}
+.hr-brief.b-sky{background:linear-gradient(100deg,rgba(14,165,233,.07),var(--panel) 60%)}
+.hr-brief.b-sky .hb-ico{background:linear-gradient(135deg,#0ea5e9,#6366f1)}
+.hr-chips{display:flex;flex-wrap:wrap;gap:7px}
+.hr-brief .hr-chips{margin-top:9px}
+.hr-chip{display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:999px;font-size:11.5px;color:var(--muted);background:var(--panel2);border:1px solid var(--line2);white-space:nowrap}
+.hr-chip i{width:7px;height:7px;border-radius:50%;background:var(--cc);display:inline-block;flex:0 0 auto}
+.hr-chip b{color:var(--ink);font-weight:700;font-variant-numeric:tabular-nums}
+.hr-t{width:100%;border-collapse:separate;border-spacing:0;font-size:13px}
+.hr-t th{background:linear-gradient(180deg,var(--panel2),var(--panel));color:var(--cyan);text-align:center;padding:9px 8px;border-bottom:2px solid var(--cyan);border-right:1px solid rgba(148,163,184,.18);position:sticky;top:0;z-index:4;font-weight:700;white-space:nowrap;font-size:12px}
+.hr-t th:last-child{border-right:none}
+.hr-t td{padding:8px;border-bottom:1px solid var(--line2);border-right:1px solid rgba(148,163,184,.14);color:var(--ink);white-space:nowrap;text-align:center;vertical-align:middle}
+.hr-t td:last-child{border-right:none}
+.hr-t td.num{font-variant-numeric:tabular-nums;font-weight:600}
+.hr-t td.tl{text-align:left}
+.hr-t td.hcell{font-weight:700;font-variant-numeric:tabular-nums;text-align:center}
+.hr-t td .em{color:var(--dim)}
+.hr-t tbody tr:nth-child(even) td{background:rgba(15,23,42,.022)}
+.hr-t tbody tr.hr-total td{background:rgba(59,130,246,.09);font-weight:700}
+.hr-t tbody tr:hover td{background:rgba(59,130,246,.07)}
+.hr-t .stk{position:sticky;left:0}
+.hr-t thead th.stk{z-index:5}
+.hr-t tbody td.stk{background:var(--panel);z-index:3;box-shadow:1px 0 0 rgba(148,163,184,.28)}
+.hr-t tbody tr:nth-child(even) td.stk{background:var(--panel2)}
+.hr-t tbody tr.hr-total td.stk{background:rgba(59,130,246,.14)}
+.hr-t .hd-dir{display:block;font-size:10px;color:var(--dim);font-weight:400;letter-spacing:.5px}
+.hr-grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.chartbox.hr-auto{aspect-ratio:auto;min-height:0}
+.chartbox.hr-auto svg{flex:0 0 auto;height:auto}
+.hr-split{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,330px);gap:14px;align-items:start}
+.hr-split-side{border-left:1px dashed var(--line);padding-left:14px}
+.hr-side-t{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.hr-tag.t-purple{background:#f3e8ff;color:#7e22ce}
+.hr-tag.t-cyan{background:#cffafe;color:#0e7490}
+.hr-tag.t-amber{background:#fef3c7;color:#b45309}
+.hr-tag.t-rose{background:#ffe4e6;color:#be123c}
+.hr-tag.t-indigo{background:#e0e7ff;color:#4338ca}
+.hr-note{margin-top:12px;padding:12px 14px;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--sc,var(--cyan));border-radius:9px;font-size:12.5px;line-height:1.85;color:var(--muted)}
+.hr-note b{color:var(--ink)}
+.hr-note .up{color:#16a34a;font-weight:700}
+.hr-note .dn{color:#dc2626;font-weight:700}
+/* ---- 组织架构树 ---- */
+.org-wrap{overflow-x:auto;padding:4px 2px 10px}
+.org-chain{display:flex;align-items:center;justify-content:center;gap:8px;flex-wrap:wrap}
+.org-box{border:1px solid var(--line);border-radius:10px;background:var(--panel2);padding:8px 14px;text-align:center;min-width:118px}
+.org-box .ob-h{font-size:13px;font-weight:800;color:var(--ink)}
+.org-box .ob-s{font-size:11px;color:var(--muted);margin-top:2px}
+.org-box .ob-s b{color:var(--ink)}
+.org-box.lv1{border-color:#14b8a6;background:linear-gradient(180deg,rgba(20,184,166,.14),transparent)}
+.org-box.lv2{border-color:#0ea5e9;background:linear-gradient(180deg,rgba(14,165,233,.12),transparent)}
+.org-box.lv3{border-color:#a855f7;background:linear-gradient(180deg,rgba(168,85,247,.14),transparent)}
+.org-arw{color:var(--dim);font-size:19px;font-weight:700;line-height:1}
+.org-stem{width:2px;height:16px;background:var(--line2);margin:6px auto 0}
+.org-kts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;position:relative;padding-top:16px;align-items:start}
+.org-kts::before{content:'';position:absolute;top:0;left:16%;right:16%;height:2px;background:var(--line2)}
+.org-kt{position:relative;border:1px solid var(--line);border-top:3px solid var(--c,#3b82f6);border-radius:11px;background:var(--panel);padding:10px 11px 12px}
+.org-kt::before{content:'';position:absolute;top:-16px;left:50%;width:2px;height:16px;background:var(--line2)}
+.org-kt-h{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.okt-n{font-size:13px;font-weight:800;color:var(--ink)}
+.okt-s{font-size:12px;color:var(--muted);white-space:nowrap}
+.okt-s b{font-size:16px;color:var(--c,#3b82f6);font-variant-numeric:tabular-nums}
+.org-bar{height:6px;border-radius:4px;background:var(--panel2);border:1px solid var(--line);overflow:hidden;margin:7px 0 5px}
+.org-bar i{display:block;height:100%;border-radius:4px}
+.org-kt-s{font-size:11px;color:var(--dim);line-height:1.6}
+.org-mgr{position:relative;margin-top:12px;padding-left:16px}
+.org-mgr::before{content:'';position:absolute;left:5px;top:-6px;bottom:16px;width:2px;background:var(--line2)}
+.org-mgr-h{position:relative;display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--panel2);border:1px solid var(--line);border-left:3px solid var(--c,#3b82f6);border-radius:8px;padding:6px 9px}
+.org-mgr-h::before{content:'';position:absolute;left:-11px;top:50%;width:11px;height:2px;background:var(--line2)}
+.om-n{font-size:12.5px;font-weight:800;color:var(--ink)}
+.om-p{font-size:12px;color:var(--muted)}
+.om-p.none{color:#dc2626;font-weight:700}
+.om-r{margin-left:auto;font-size:11px;color:var(--dim);white-space:nowrap}
+.om-r b{color:var(--ink);font-variant-numeric:tabular-nums}
+.org-groups{display:grid;grid-template-columns:repeat(auto-fill,minmax(146px,1fr));gap:7px;margin:7px 0 0 16px}
+.org-g{border:1px dashed var(--line2);border-radius:8px;background:var(--panel2);padding:6px 8px}
+.og-h{display:flex;align-items:baseline;justify-content:space-between;gap:6px}
+.og-n{font-size:12px;font-weight:700;color:var(--ink)}
+.og-l{font-size:11px;color:#0e7490}
+.og-l.none{color:#dc2626;font-weight:700}
+.og-m{font-size:11px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+.og-m.dim{color:var(--dim)}
+.og-m b{color:var(--ink);font-weight:800}
+.og-pls{margin-top:5px;display:flex;flex-wrap:wrap;gap:3px}
+.pl{font-size:10.5px;line-height:1.5;padding:1px 5px;border-radius:5px;background:rgba(148,163,184,.16);color:var(--muted);border:1px solid var(--line)}
+.pl i{font-style:normal;opacity:.72;margin-left:2px}
+.pl.pn{background:#fff1f2;color:#be123c;border-color:#fecdd3}
+.pl.pt{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+@media(max-width:1180px){
+  .hr-grid2{grid-template-columns:1fr}
+  .hr-split{grid-template-columns:1fr}
+  .hr-split-side{border-left:none;padding-left:0;border-top:1px dashed var(--line);padding-top:12px}
+  .org-kts{grid-template-columns:1fr}
+  .org-kts::before{left:0;right:0}
+  .org-kt::before{left:20px}
+}
+
+</style>
+
 <body>
 
 <!-- ============ LOGIN ============ -->
@@ -1192,6 +1342,9 @@ body.theme-light .stScope .tag.new{color:var(--samber)}
           <div class="nav-sub-item" data-mod="strategy" data-sub="stOldNew">新老差异</div>
         </div>
       </div>
+      <div class="nav-group" data-group="hr">
+        <div class="nav-item" data-mod="hr"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M16 19v-1a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v1M9.5 10.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7ZM17 11.5a3 3 0 1 0 0-6M20 19v-1a4 4 0 0 0-3-3.87" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>人力数据</div>
+      </div>
       <div class="nav-item" data-mod="broadcast"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="18" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 9h18M9 9v11M15 9v11M3 14h18" stroke="currentColor" stroke-width="1.6"/></svg>转化数据播报</div>
       <div class="nav-item" data-mod="projCompare"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 6h13M8 12h13M8 18h13M3 6h.5M3 12h.5M3 18h.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>项目对比</div>
       <div class="nav-item" data-mod="ai"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 3l1.8 4.6L18 9l-4.2 1.4L12 15l-1.8-4.6L6 9l4.2-1.4z" fill="currentColor"/><circle cx="18" cy="17" r="2" stroke="currentColor" stroke-width="1.5"/><circle cx="6" cy="17" r="2" stroke="currentColor" stroke-width="1.5"/></svg>AI分析报告</div>
@@ -1302,8 +1455,8 @@ const SYS_GUEST_ACCOUNT={"u": "guest", "p": "guest123", "name": "访客", "role"
    角色=访客：数据中无"访客"列 → 自动跳过姓名行级过滤，仅受数据范围约束（最适合"指定链路查询"账号）。
    fn: 可查看+导出，不可上传/配置。初始密码 123456，管理员可在「权限管理」修改。 */
 const BIZ_ACCOUNTS=[
-  {u:'duanyunhan',p:'yh123',name:'duanyunhan',role:'访客',proj:['声音'],link:['L3','L6'],dim:['*'],fn:{view:1,export:1,upload:0,config:0},mods:['month','period','rank','diag','cmp','alert','broadcast','projCompare','ai','process','strategy']},
-  {u:'heming',p:'hm123',name:'heming',role:'访客',proj:['声音'],link:['L3'],dim:['*'],fn:{view:1,export:1,upload:0,config:0},mods:['month','period','rank','diag','cmp','alert','broadcast','projCompare','ai','process','strategy']}
+  {u:'duanyunhan',p:'yh123',name:'duanyunhan',role:'访客',proj:['声音'],link:['L3','L6'],dim:['*'],fn:{view:1,export:1,upload:0,config:0},mods:['month','period','rank','diag','cmp','alert','broadcast','projCompare','ai','process','strategy','hr']},
+  {u:'heming',p:'hm123',name:'heming',role:'访客',proj:['声音'],link:['L3'],dim:['*'],fn:{view:1,export:1,upload:0,config:0},mods:['month','period','rank','diag','cmp','alert','broadcast','projCompare','ai','process','strategy','hr']}
 ];
 function defaultAccounts(){ return [ SYS_ADMIN_ACCOUNT, SYS_GUEST_ACCOUNT ].concat(BIZ_ACCOUNTS).filter(Boolean); }
 function defaultConfig(){ return { threshold:20, trendN:2, pushOn:true, reportOn:false, backupOn:true, webhook:'', apiUrl:'', apiToken:'', version:2 }; }
@@ -2584,6 +2737,7 @@ async function alPushLoadChats(verbose){
   }
 }
 MOD_TEMPLATES['strategy']="<div class=\"mod\" id=\"mod-strategy\">\n        <div class=\"page-head\"><h2>策略分析</h2><span class=\"desc\" id=\"stDesc\">铺垫检测 · SOP 比对 · 新老差异 · 独立数据源（声音L6 运营数据汇总），不随系统筛选联动</span></div>\n        <div class=\"tabbar\" data-tabs>\n          <div class=\"tab active\" data-sub=\"stNurture\">铺垫检测</div>\n          <div class=\"tab\" data-sub=\"stSop\">SOP 比对</div>\n          <div class=\"tab\" data-sub=\"stOldNew\">新老差异</div>\n        </div>\n        <div class=\"stScope\">\n<section class=\"subpanel show\" data-sub=\"stNurture\" id=\"stView-nurture\">\n  <div class=\"st-topbar\">\n    <span class=\"tb-l\">\u8425\u671f</span>\n    <div class=\"chips\" id=\"periodChips\"></div>\n    <button class=\"mini\" id=\"btnAll\">\u5168\u9009</button>\n    <span class=\"tb-l\" style=\"margin-left:8px\">\u805a\u5408\u7ef4\u5ea6</span>\n    <div class=\"seg\" id=\"segDim\">\n      <button data-dim=\"period\" class=\"on\">\u6309\u8425\u671f</button>\n      <button data-dim=\"class\">\u6309\u73ed\u7ea7</button>\n    </div>\n    <span class=\"tb-l\" style=\"margin-left:8px\">\u95ee\u5377\u53e3\u5f84</span>\n    <div class=\"seg\" id=\"segTrack\">\n      <button data-track=\"dj\" class=\"on\">\u7535\u5546\u95ee\u5377</button>\n      <button data-track=\"dk\">\u5927\u8bfe\u95ee\u5377</button>\n    </div>\n    <span class=\"tb-hint\" id=\"scopeHint\"></span><span class=\"tb-hint\" id=\"asOf\"></span>\n  </div>\n\n  <section class=\"sec\">\n    <h2><span class=\"no\">1</span>\u94fa\u57ab KPI \u770b\u677f<span class=\"hint\" id=\"kpiHint\"></span></h2>\n    <div class=\"kpis\" id=\"kpi\"></div>\n  </section>\n\n  <section class=\"sec\">\n    <h2><span class=\"no\">2</span>\u4e09\u8f6e\u95ee\u5377\u63d0\u4ea4\u7387\u8d8b\u52bf<span class=\"hint\" id=\"trendHint\"></span></h2>\n    <div class=\"chart-box\"><canvas id=\"chartTrend\"></canvas></div>\n    <div class=\"legend-note\">\n      <span><i style=\"background:#5BC8F5\"></i>\u4e00\u8f6e\u63d0\u4ea4\u7387</span>\n      <span><i style=\"background:#4ECDC4\"></i>\u4e8c\u8f6e\u63d0\u4ea4\u7387</span>\n      <span><i style=\"background:#FF9F68\"></i>\u4e09\u8f6e\u63d0\u4ea4\u7387</span>\n      <span>\u63d0\u4ea4\u7387 = \u63d0\u4ea4\u4eba\u6570 \u00f7 \u539f\u59cb\u4eba\u6570</span>\n    </div>\n  </section>\n\n  <section class=\"sec\">\n    <h2><span class=\"no\">3</span>\u9884\u5b9a\u7387\u6f0f\u6597 + \u6bcf\u8f6e\u8fdb\u5c55\u8d8b\u52bf\n      <span class=\"hint\" id=\"funnelHint\"></span>\n    </h2>\n    <div class=\"chart-box\"><canvas id=\"chartFunnel\"></canvas></div>\n    <div class=\"legend-note\" id=\"funnelLegend\"></div>\n    <div class=\"tb-wrap\" id=\"funnelTable\"></div>\n    <div class=\"note\" id=\"funnelNote\"></div>\n  </section>\n\n  <section class=\"sec\">\n    <h2><span class=\"no\">4</span>\u63d0\u4ea4\u7387\u56de\u6536\u76d1\u6d4b \u00b7 \u8865\u4e01\u52a8\u4f5c\u63d0\u9192<span class=\"hint\">\u89c4\u5219\u81ea\u52a8\u751f\u6210\uff1a\u5bf9\u6807\u672c\u6279\u52a0\u6743\u5747\u503c\uff0c\u504f\u79bb\u5373\u63d0\u793a\u52a8\u4f5c</span></h2>\n    <div class=\"focus-box\" id=\"alertBox\"></div>\n  </section>\n\n  <section class=\"sec\">\n    <h2><span class=\"no\">5</span>\u4eba\u7fa4\u7ed3\u6784\u5206\u5e03 \u00b7 \u6392\u5f02\u9762\u8bc6\u522b<span class=\"hint\" id=\"structHint\"></span></h2>\n    <div class=\"chart-box sm\"><canvas id=\"chartStruct\"></canvas></div>\n    <div class=\"tb-wrap\" id=\"riskTable\"></div>\n    <div class=\"note\" id=\"structNote\"></div>\n  </section>\n\n  <section class=\"sec\">\n    <h2><span class=\"no\">6</span>\u7535\u5546 / \u5927\u8bfe \u53cc\u8f68\u5bf9\u6bd4<span class=\"hint\">\u4e24\u6761\u9500\u8f6c\u7ebf\u5728\u540c\u4e00\u6279\u73ed\u7ea7\u4e0a\u7684\u95ee\u5377\u63a8\u8fdb\u5dee\u5f02</span></h2>\n    <div class=\"chart-box sm\"><canvas id=\"chartDual\"></canvas></div>\n    <div class=\"tb-wrap\" id=\"dualTable\"></div>\n    <div class=\"note\" id=\"dualNote\"></div>\n  </section>\n</section>\n          <section class=\"subpanel\" data-sub=\"stSop\" id=\"stView-sop\">\n    <div class=\"sec\">\n      <h2><span class=\"no\">A</span>\u6559\u7ec3\u4e0b\u53d1\u52a8\u4f5c vs \u9ad8\u503c SOP \u6bd4\u5bf9\n        <select class=\"sel\" id=\"chatSource\">\n          <option value=\"preset\">\u9884\u7f6e\u6837\u672c\uff08\u6717\u8bf5L3 \u00b7 \u8d75\u9732 \u00b7 \u5f90\u5f90\u98ce\u60c5\uff09</option>\n          <option value=\"upload\">\u672c\u6b21\u4e0a\u4f20\u7684\u804a\u5929\u8bb0\u5f55</option>\n        </select>\n        <label class=\"iset\">\u63a5\u4eba\u5468\u8d77\u59cb\u65e5\u671f\uff08\u5468\u4e8c\uff09<input class=\"sel\" id=\"sopStart\" type=\"date\"></label>\n        <label class=\"mini filelabel\">\u4e0a\u4f20\u804a\u5929\u8bb0\u5f55 / SOP \u5927\u7eb2<input type=\"file\" id=\"sopFile\" accept=\".xlsx,.xls,.csv\" hidden></label>\n      </h2>\n      <div class=\"sec-sub\" id=\"sopMeta\"></div>\n      <div class=\"kpis\" id=\"sopKpi\" style=\"margin-top:12px\"></div>\n      <div class=\"alert-box\" id=\"sopAlert\"></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">B</span>\u5404\u9636\u6bb5\u5339\u914d\u60c5\u51b5</h2>\n      <div class=\"tb-wrap\"><table class=\"tb\"><thead><tr><th>\u9636\u6bb5</th><th class=\"n\">\u547d\u4e2d/\u57fa\u51c6</th><th class=\"n\">\u5339\u914d\u7387</th></tr></thead><tbody id=\"sopStage\"></tbody></table></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">C</span>\u9010\u65e5\u5339\u914d\u60c5\u51b5</h2>\n      <div class=\"tb-wrap\"><table class=\"tb\"><thead><tr><th>\u65e5\u671f</th><th>\u8fd0\u8425\u5468\u6b21</th><th>\u5468\u51e0</th><th class=\"n\">\u547d\u4e2d/\u57fa\u51c6</th><th class=\"n\">\u5339\u914d\u7387</th></tr></thead><tbody id=\"sopDate\"></tbody></table></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">D</span>\u7f3a\u5931\u52a8\u4f5c\uff08\u9700\u8865\u9f50\u4e0b\u53d1\uff09</h2>\n      <div class=\"tb-wrap\"><table class=\"tb\"><thead><tr><th>\u65e5\u671f</th><th>\u9636\u6bb5</th><th>\u5468\u51e0</th><th>\u57fa\u51c6\u65f6\u95f4</th><th>\u6807\u7b7e</th><th>\u52a8\u4f5c</th></tr></thead><tbody id=\"sopMissing\"></tbody></table></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">E</span>\u975e\u57fa\u51c6\u52a8\u4f5c\uff08\u6559\u7ec3\u81ea\u884c\u52a0\u53d1 / \u65f6\u6bb5\u504f\u5dee\uff09</h2>\n      <div class=\"tb-wrap\" style=\"max-height:420px\"><table class=\"tb\"><thead><tr><th>\u53d1\u9001\u65f6\u95f4</th><th>\u65f6\u523b</th><th>\u5224\u5b9a</th><th>\u5185\u5bb9</th></tr></thead><tbody id=\"sopExtra\"></tbody></table></div>\n    </div>\n    <div class=\"note\">\u53e3\u5f84\uff1a\u4ec5\u7edf\u8ba1\u6559\u7ec3\uff08\u6559\u7ec3\uff09\u6d88\u606f\uff1b\u9636\u6bb5\u65e5\u5386 = \u63a5\u4eba\u5468\uff08\u5468\u4e8c\u8d77 6 \u5929\uff09\u2192 \u4fdd\u6e29\u5468 7 \u5929 \u2192 \u8fd0\u8425\u7b2c\u4e00\u5468 7 \u5929 \u2192 \u9500\u8f6c\u5468 3 \u5929\uff1b\u57fa\u51c6\u52a8\u4f5c\u6309\u300c\u540c\u65e5 + \u65f6\u95f4\u6700\u8fd1\u4f18\u5148 \u00b1 90 \u5206\u949f\u300d\u5339\u914d\uff0c\u672a\u547d\u4e2d\u4efb\u4f55\u57fa\u51c6\u69fd\u4f4d\u7684\u6559\u7ec3\u6d88\u606f\u8ba1\u4e3a\u975e\u57fa\u51c6\u52a8\u4f5c\uff1b\u7f3a\u5931\u52a8\u4f5c\u9700\u7ec4\u957f\u5f53\u65e5\u8865\u9f50\u4e0b\u53d1\u3001\u4e3b\u7ba1\u590d\u6838\u3002\u9884\u7f6e\u6837\u672c\u4e3a\u6717\u8bf5L3 \u9ad8\u503c\u6559\u7ec3 SOP \u57fa\u51c6\uff08248 \u4e2a\u57fa\u51c6\u52a8\u4f5c\uff09\uff1b\u5206\u6790 L6 \u804a\u5929\u8bb0\u5f55\u8bf7\u4e0a\u4f20\u540e\u9009\u62e9\u300c\u672c\u6b21\u4e0a\u4f20\u7684\u804a\u5929\u8bb0\u5f55\u300d\uff0c\u540c\u65f6\u652f\u6301\u4e0a\u4f20\u65b0\u7684\u300c\u8fd0\u8425\u8282\u594f\u5927\u7eb2\u300d\u8986\u76d6\u57fa\u51c6\uff08\u9700\u542b \u6807\u7b7e / \u52a8\u4f5c \u5217\uff09\u3002</div>\n  </section>\n          <section class=\"subpanel\" data-sub=\"stOldNew\" id=\"stView-oldnew\">\n    <div class=\"sec\">\n      <h2><span class=\"no\">A</span>\u65b0\u8001\u6559\u7ec3\u6838\u5fc3\u6307\u6807\u5bf9\u6bd4\n        <span class=\"tb-l\" style=\"margin-left:8px\">\u95ee\u5377\u53e3\u5f84</span>\n        <span class=\"seg\" id=\"segOn\">\n          <button data-track=\"dj\" class=\"on\">\u7535\u5546\u95ee\u5377</button>\n          <button data-track=\"dk\">\u5927\u8bfe\u95ee\u5377</button>\n        </span>\n      </h2>\n      <div class=\"sec-sub\" id=\"onMeta\"></div>\n      <div class=\"kpis\" id=\"onKpi\" style=\"margin-top:12px\"></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">B</span>\u65b0\u8001\u6559\u7ec3\u7ec4\u6307\u6807\u5bf9\u6bd4<span class=\"hint\">\u8001\u6559\u7ec3=\u84dd \u00b7 \u65b0\u6559\u7ec3=\u6a59 \u00b7 \u5355\u4f4d%</span></h2>\n      <div class=\"chart-box\"><canvas id=\"chartOldNew\"></canvas></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">C</span>\u5dee\u5f02\u660e\u7ec6\u4e0e\u89e3\u8bfb</h2>\n      <div class=\"tb-wrap\" id=\"onTable\"></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">D</span>\u8865\u9f50\u52a8\u4f5c\u5efa\u8bae<span class=\"hint\">\u89c4\u5219\u81ea\u52a8\u751f\u6210\uff1a\u65b0\u8001\u5dee\u8ddd \u22653pp \u89e6\u53d1\u5bf9\u5e94\u8865\u9f50\u52a8\u4f5c</span></h2>\n      <div class=\"focus-box\" id=\"onActs\"></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">E</span>\u6559\u7ec3\u7ea7\u5206\u5e03<span class=\"hint\" id=\"onCoachHint\"></span></h2>\n      <div class=\"chart-box tall\"><canvas id=\"chartOldNewCoach\"></canvas></div>\n    </div>\n    <div class=\"sec\">\n      <h2><span class=\"no\">F</span>\u6559\u7ec3\u660e\u7ec6</h2>\n      <div class=\"tb-wrap\" id=\"onCoachTable\"></div>\n      <div class=\"note\" id=\"onNote\"></div>\n    </div>\n  </section>\n        \n        </div>\n</div>";
+MOD_TEMPLATES['hr']="<div class=\"mod\" id=\"mod-hr\">\n  <div class=\"page-head\"><h2>人力数据</h2><span class=\"desc\" id=\"hrHeadNote\"></span></div>\n  <div class=\"anchornav\" id=\"hrAnchorNav\">\n    <button class=\"btn on\" data-anchor=\"hrSec1\">接量在职情况</button>\n    <button class=\"btn\" data-anchor=\"hrSec2\">TOP留存</button>\n    <button class=\"btn\" data-anchor=\"hrSec3\">PIP情况</button>\n    <button class=\"btn\" data-anchor=\"hrSec4\">干部排名现状</button>\n    <button class=\"btn\" data-anchor=\"hrSec5\">招聘数据</button>\n    <button class=\"btn\" data-anchor=\"hrSec6\">组织架构</button>\n  </div>\n  <div class=\"card\"><div class=\"card-t\"><h3>核心指标总览</h3><span class=\"sub\">接量 · 留存 · PIP · 干部 · 招聘 · 组织</span></div><div class=\"kpis mod6\" id=\"hrKpis\"></div></div>\n  <div class=\"hr-brief\" id=\"hrBriefTop\"></div>\n\n  <section class=\"msec hr-sec\" id=\"hrSec1\" style=\"--sc:#3b82f6\">\n    <div class=\"sec-h\"><span class=\"sec-no\">1</span><h3>接量在职情况</h3><span class=\"sub\">分月在职趋势 · 各营期接量编制与缺口</span></div>\n    <div class=\"msec-body\">\n      <div class=\"hr-grid2\">\n        <div class=\"card\"><div class=\"card-t\"><h3>分月人员变化趋势预估</h3><span class=\"sub\">柱：在职人数（月底） · 线：净增长</span></div><div class=\"chartbox\" id=\"hrJlTrend\" style=\"aspect-ratio:680/300\"></div></div>\n        <div class=\"card\"><div class=\"card-t\"><h3>已安排编制结构</h3><span class=\"sub\">一线 / 组长 / 主管</span></div><div class=\"chartbox\" id=\"hrJlStruct\" style=\"aspect-ratio:680/300\"></div></div>\n      </div>\n      <div class=\"card\"><div class=\"card-t\"><h3>各营期接量 &amp; 缺口</h3><span class=\"sub\">满足率按本视图 min~max 归一化 · 灰底为总计行</span></div><div class=\"tbl-wrap\" id=\"hrJlTable\" style=\"max-height:420px\"></div><div class=\"hr-note\" id=\"hrNoteJl\"></div></div>\n    </div>\n  </section>\n\n  <section class=\"msec hr-sec\" id=\"hrSec2\" style=\"--sc:#22c55e\">\n    <div class=\"sec-h\"><span class=\"sec-no\">2</span><h3>TOP留存</h3><span class=\"sub\">电商品 / 大课两个转化营期口径 · 单产不可跨口径比较</span></div>\n    <div class=\"msec-body\">\n      <div class=\"dimbar\"><div class=\"seg\" id=\"hrTopSeg\">\n        <button class=\"btn sm on\" data-top=\"ecom\">电商品转化营期</button>\n        <button class=\"btn sm\" data-top=\"big\">大课转化营期</button>\n      </div><span class=\"dim-note\" id=\"hrTopSum\"></span></div>\n      <div class=\"hr-brief\" id=\"hrBriefTop2\"></div>\n      <div class=\"card\"><div class=\"card-t\"><h3>TOP留存教练明细</h3><span class=\"sub\" id=\"hrTopTableSub\">全量 · 转率/单产按本口径归一化</span></div>\n        <div class=\"hr-split\">\n          <div class=\"tbl-wrap\" id=\"hrTopTable\" style=\"max-height:560px\"></div>\n          <div class=\"hr-split-side\">\n            <div class=\"hr-side-t\">人员状态构成</div>\n            <div class=\"chartbox\" id=\"hrTopStatus\" style=\"aspect-ratio:680/300\"></div>\n            <div class=\"hr-chips\" id=\"hrTopChips\"></div>\n          </div>\n        </div>\n        <div class=\"hr-note\" id=\"hrNoteTop\"></div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"msec hr-sec\" id=\"hrSec3\" style=\"--sc:#f97316\">\n    <div class=\"sec-h\"><span class=\"sec-no\">3</span><h3>PIP情况</h3><span class=\"sub\">高互动率 / 退费率 / 电商复购 / 大课复购</span></div>\n    <div class=\"msec-body\">\n      <div class=\"dimbar\"><div class=\"seg\" id=\"hrPipSeg\">\n        <button class=\"btn sm on\" data-pip=\"hi\">高互动率</button>\n        <button class=\"btn sm\" data-pip=\"refund\">退费率</button>\n        <button class=\"btn sm\" data-pip=\"ecom\">电商复购</button>\n        <button class=\"btn sm\" data-pip=\"big\">大课复购</button>\n      </div><span class=\"dim-note\" id=\"hrPipSum\"></span></div>\n      <div class=\"hr-grid2\">\n        <div class=\"card\"><div class=\"card-t\"><h3>四类口径需关注人次</h3><span class=\"sub\">已签 PIP / 判定淘汰</span></div><div class=\"chartbox hr-auto\" id=\"hrPipBar\"></div></div>\n        <div class=\"card\"><div class=\"card-t\"><h3>高互动率达标走势</h3><span class=\"sub\">柱：各周平均互动率 · 线：当周需签 PIP 人数</span></div><div class=\"chartbox\" id=\"hrPipTrend\" style=\"aspect-ratio:680/280\"></div></div>\n      </div>\n      <div class=\"card\"><div class=\"card-t\"><h3>PIP 明细</h3><span class=\"sub\">按周次/口径追踪 PIP 签署与解除</span></div>\n        <div class=\"hr-pip-pane\" data-pip=\"hi\" id=\"hrPipHi\" style=\"display:block\"><div class=\"tbl-wrap\" style=\"overflow-x:auto;max-height:440px\" id=\"hrPipHiT\"></div></div>\n        <div class=\"hr-pip-pane\" data-pip=\"refund\" id=\"hrPipRefund\" style=\"display:none\"><div class=\"tbl-wrap\" style=\"overflow-x:auto;max-height:440px\" id=\"hrPipRefundT\"></div></div>\n        <div class=\"hr-pip-pane\" data-pip=\"ecom\" id=\"hrPipEcom\" style=\"display:none\"><div class=\"tbl-wrap\" style=\"overflow-x:auto;max-height:440px\" id=\"hrPipEcomT\"></div></div>\n        <div class=\"hr-pip-pane\" data-pip=\"big\" id=\"hrPipBig\" style=\"display:none\"><div class=\"tbl-wrap\" style=\"overflow-x:auto;max-height:440px\" id=\"hrPipBigT\"></div></div>\n        <div class=\"hr-note\" id=\"hrNotePip\"></div>\n      </div>\n    </div>\n  </section>\n\n  <section class=\"msec hr-sec\" id=\"hrSec4\" style=\"--sc:#a855f7\">\n    <div class=\"sec-h\"><span class=\"sec-no\">4</span><h3>干部排名现状</h3><span class=\"sub\">组长维度 · 按商品（电商品 / 大课）分口径</span></div>\n    <div class=\"msec-body\">\n      <div class=\"dimbar\"><div class=\"seg\" id=\"hrLdSeg\">\n        <button class=\"btn sm on\" data-ld=\"ecom\">电商品</button>\n        <button class=\"btn sm\" data-ld=\"big\">大课</button>\n      </div><span class=\"dim-note\" id=\"hrLdSum\"></span></div>\n      <div class=\"card\"><div class=\"card-t\"><h3>组长单产对比</h3><span class=\"sub\">绿=高于本口径均值 · 橙=低于均值 · 虚线为均值参考</span></div><div class=\"chartbox hr-auto\" id=\"hrLdChart\"></div></div>\n      <div class=\"card\"><div class=\"card-t\"><h3>组长排名明细</h3><span class=\"sub\" id=\"hrLdTableSub\">单产/转率按本视图归一化</span></div><div class=\"tbl-wrap\" id=\"hrLeaderTable\" style=\"max-height:460px\"></div><div class=\"hr-note\" id=\"hrNoteLd\"></div></div>\n    </div>\n  </section>\n\n  <section class=\"msec hr-sec\" id=\"hrSec5\" style=\"--sc:#0ea5e9\">\n    <div class=\"sec-h\"><span class=\"sec-no\">5</span><h3>招聘数据</h3><span class=\"sub\">需求 → 入职全链路 · 按岗位/月份</span></div>\n    <div class=\"msec-body\">\n      <div class=\"hr-grid2\">\n        <div class=\"card\"><div class=\"card-t\"><h3>校准后需求 vs 入职（朗诵L4 · 9月）</h3><span class=\"sub\">柱：需求 · 线：入职</span></div><div class=\"chartbox\" id=\"hrRecChart\" style=\"aspect-ratio:680/300\"></div></div>\n        <div class=\"card\"><div class=\"card-t\"><h3>招聘全链路转化</h3><span class=\"sub\">简历 → 面试 → 通过 → Offer → 入职</span></div><div class=\"chartbox\" id=\"hrRecFunnel\" style=\"aspect-ratio:680/300\"></div></div>\n      </div>\n      <div class=\"card\"><div class=\"card-t\"><h3>各岗位招聘完成度</h3><span class=\"sub\">入职 / 校准后需求 · 100% 为达成</span></div><div class=\"chartbox hr-auto\" id=\"hrRecBar\"></div></div>\n      <div class=\"card\"><div class=\"card-t\"><h3>招聘数据明细</h3><span class=\"sub\">全口径 · 灰底行为小计/总计，不计入 KPI</span></div><div class=\"tbl-wrap\" id=\"hrRecTable\" style=\"max-height:460px\"></div><div class=\"hr-note\" id=\"hrNoteRec\"></div></div>\n    </div>\n  </section>\n\n  <section class=\"msec hr-sec\" id=\"hrSec6\" style=\"--sc:#14b8a6\">\n    <div class=\"sec-h\"><span class=\"sec-no\">6</span><h3>组织架构</h3><span class=\"sub\">教学中心 › 声音技能交付部 › 有声演播陪跑课题一团 · 课题 / 主管 / 组长三级梯队</span></div>\n    <div class=\"msec-body\">\n      <div class=\"card\"><div class=\"card-t\"><h3>组织层级架构图</h3><span class=\"sub\">一级中心 → 二级部门 → 三级课题团 → 四级课题 → 五级主管 → 六级组长 · 卡片标注目前管幅</span></div>\n        <div class=\"org-wrap\" id=\"hrOrgTree\"></div>\n        <div class=\"hr-chips\" id=\"hrOrgChips\"></div>\n        <div class=\"hr-note\" id=\"hrNoteOrg\"></div>\n      </div>\n      <div class=\"hr-grid2\">\n        <div class=\"card\"><div class=\"card-t\"><h3>课题人数分布</h3><span class=\"sub\">四级架构口径 · 占一团在册人数</span></div><div class=\"chartbox\" id=\"hrOrgPie\" style=\"aspect-ratio:680/300\"></div></div>\n        <div class=\"card\"><div class=\"card-t\"><h3>主管带教管幅对比</h3><span class=\"sub\">柱：下属组目前管幅合计 · 虚线：课题人数</span></div><div class=\"chartbox hr-auto\" id=\"hrOrgMgr\"></div></div>\n      </div>\n      <div class=\"card\"><div class=\"card-t\"><h3>组长 · 组员明细</h3><span class=\"sub\" id=\"hrOrgTableSub\">全量组-营期单元</span></div><div class=\"tbl-wrap\" id=\"hrOrgTable\" style=\"max-height:480px\"></div></div>\n    </div>\n  </section>\n</div>";
 MOD_TEMPLATES['broadcast']="<div class=\"mod\" id=\"mod-broadcast\">\n<div class=\"page-head\"><h2>转化数据播报</h2><span class=\"desc\">分层业绩大表 · 可出图并推送企微</span><span class=\"spacer\"></span>\n<button class=\"btn\" id=\"bcRefresh\">刷新</button><button class=\"btn pri\" id=\"bcPush\">📤 推送播报</button></div>\n<div class=\"filterbar\">\n<div class=\"fld\"><label>营期</label><select id=\"bcBatch\"></select></div>\n<div class=\"fld\"><label>层级</label><select id=\"bcLayer\"><option>全部层级</option><option>营期</option><option>负责人</option><option>经理</option><option>主管</option><option>组长</option><option>教练</option></select></div>\n<div class=\"fld\"><label>目标群</label><select class=\"al-push-chat\" id=\"bcChat\" data-panel=\"bc\" style=\"min-width:150px\"></select></div>\n</div>\n<div class=\"card\"><div class=\"card-t\"><h3>转化数据播报表</h3><span class=\"sub\" id=\"bcSub\"></span></div>\n<div class=\"tbl-wrap\" id=\"bcTable\"><table class=\"data\"><thead id=\"bcHead\"></thead><tbody id=\"bcBody\"></tbody></table></div></div>\n<div id=\"bcMsg\" style=\"font-size:12px;line-height:1.8;margin-top:8px\"></div>\n</div>\n";
 /* ============================================================
    转化数据播报（第 10 个板块；2026-09-15 二次改造）
@@ -3191,6 +3345,7 @@ function applyTheme(t){
   try{ var _pe=document.getElementById('mod-process'); if(_pe&&_pe.classList.contains('active')) renderPrActive(); }catch(e){}
   try{ var _pp=document.getElementById('mod-period'); if(_pp&&_pp.classList.contains('active')) renderPPrice(); }catch(e){}
   try{ if(window.__ST_APP&&window.__ST_APP.theme) window.__ST_APP.theme(light); }catch(e){}
+  try{ if(window.__HR_APP__&&window.__HR_APP__.theme) window.__HR_APP__.theme(light); }catch(e){}
 }
 function initTheme(){ applyTheme(LS.get(THEME_KEY)||'dark'); }
 function toggleTheme(){
@@ -3213,7 +3368,7 @@ function showMod(m, subKey){
   $('#sidebar').classList.remove('open');
   const R={ 'month':()=>renderMonth(),'period':()=>renderActiveSub('period'),
     'rank':()=>renderActiveSub('rank'),'diag':()=>renderActiveSub('diag'),'cmp':()=>renderActiveSub('cmp'),
-    'alert':renderAlert,'broadcast':renderBroadcast,'projCompare':renderProjCompare,'ai':renderAI,'sys':()=>renderActiveSub('sys'),'process':()=>renderActiveSub('process'),'strategy':()=>renderActiveSub('strategy') };
+    'alert':renderAlert,'broadcast':renderBroadcast,'projCompare':renderProjCompare,'ai':renderAI,'sys':()=>renderActiveSub('sys'),'process':()=>renderActiveSub('process'),'strategy':()=>renderActiveSub('strategy'),'hr':()=>{ if(window.__HR_RENDER__) window.__HR_RENDER__(); } };
   try{ if(R[m])R[m](); }
   catch(err){
     console.error('[showMod] '+m+' 渲染异常', err);
@@ -3273,7 +3428,7 @@ function forgotPass(){
     $('#fpMsg').textContent='验证码已发送至 '+ph.replace(/(\d{3})\d{4}(\d{4})/,'$1****$2')+'（模拟环境验证码：'+fpCodeNow+'）';
   };
 }
-window.__BUILD__='v6.11.1'; console.info('[元析智察] build:',window.__BUILD__,'· 加载完成 · 内置样本数据已清空，请在「数据管理」上传 Excel 数据后使用');
+window.__BUILD__='v6.12.0'; console.info('[元析智察] build:',window.__BUILD__,'· 加载完成 · 内置样本数据已清空，请在「数据管理」上传 Excel 数据后使用');
 function enterApp(){ $('#login').style.display='none'; $('#app').style.display='block'; state.user=USER;
   $('#whoName').textContent=USER.name||USER.u; $('#whoAvatar').textContent=(USER.name||USER.u||'A').charAt(0); $('#whoRole').textContent=USER.role;
   const bv=$('#buildVer'); if(bv)bv.textContent=window.__BUILD__;
@@ -8979,6 +9134,1099 @@ window.__ST_APP_INIT=function () {
   };
 }
 
+</script>
+<script>window.__HR_DATA__ = {"src": "人力数据底表2.0.xlsx", "ver": "20260923_org01", "jieLiang": {"rows": [{"topic": "朗诵L4", "camp": "11期", "total": 700, "perCap": 100, "need": 7, "yx": 5, "zz": 2, "zg": 1, "needZg": 1, "needZz": 2, "newPer": 2, "oldPer": 3, "replace": 1, "gap1": 1, "gapZz": 0, "gapZg": 0, "satisfy": 1, "jdate": "2026-09-01", "best": "2026-08-18", "judge": "一线缺口1人", "__sum": 0}, {"topic": "朗诵L4", "camp": "13期", "total": 960, "perCap": 96, "need": 10, "yx": 7, "zz": 3, "zg": 1, "needZg": 2, "needZz": 3, "newPer": 1, "oldPer": 6, "replace": 2, "gap1": 2, "gapZz": 0, "gapZg": -1, "satisfy": 1, "jdate": "2026-09-14", "best": "2026-08-31", "judge": "一线缺口2人", "__sum": 0}, {"topic": "朗诵L4", "camp": "14期", "total": 700, "perCap": 100, "need": 7, "yx": 6, "zz": 1, "zg": 1, "needZg": 1, "needZz": 1, "newPer": 3, "oldPer": 3, "replace": 1, "gap1": 1, "gapZz": 0, "gapZg": 0, "satisfy": 1, "jdate": "2026-09-21", "best": "2026-09-07", "judge": "一线缺口1人", "__sum": 0}, {"topic": "朗诵L4", "camp": "15期", "total": 600, "perCap": 100, "need": 6, "yx": 3, "zz": 3, "zg": 1, "needZg": 2, "needZz": 3, "newPer": 3, "oldPer": 0, "replace": 1, "gap1": 1, "gapZz": 0, "gapZg": -1, "satisfy": 1, "jdate": "2026-09-28", "best": "2026-09-14", "judge": "一线缺口1人", "__sum": 0}, {"topic": "朗诵L4", "camp": "16期", "total": 1200, "perCap": 100, "need": 12, "yx": 11, "zz": 1, "zg": 1, "needZg": 1, "needZz": 1, "newPer": 5, "oldPer": 6, "replace": 2, "gap1": 2, "gapZz": 0, "gapZg": 0, "satisfy": 1, "jdate": "2026-10-19", "best": "2026-10-05", "judge": "一线缺口2人", "__sum": 0}, {"topic": "朗诵L4", "camp": "17期", "total": 700, "perCap": 100, "need": 7, "yx": 7, "zz": 0, "zg": 1, "needZg": 0, "needZz": 0, "newPer": 0, "oldPer": 7, "replace": 1, "gap1": 1, "gapZz": 0, "gapZg": 1, "satisfy": 1, "jdate": "2026-10-20", "best": "2026-10-06", "judge": "一线缺口1人，主管缺口1人", "__sum": 0}, {"topic": "总计（9月、10月）", "camp": null, "total": 4860, "perCap": 596, "need": 49, "yx": 39, "zz": 10, "zg": 6, "needZg": 7, "needZz": 10, "newPer": 14, "oldPer": 25, "replace": 8, "gap1": 8, "gapZz": 0, "gapZg": -1, "satisfy": 1, "jdate": null, "best": null, "judge": "一线缺口8人", "__sum": 1}], "trend": [{"topic": "朗诵L4", "month": "7月", "headStart": 13, "jlTotal": 11, "release": 0, "leave": 2, "transfer": null, "net": 13, "headEnd": 26, "line1": 9, "leader": 3, "manager": 1, "managerLead": 1}, {"topic": "朗诵L4", "month": "8月", "headStart": 26, "jlTotal": 7, "release": 3, "leave": 4, "transfer": null, "net": 10, "headEnd": 36, "line1": 29, "leader": 5, "manager": 2, "managerLead": 1}, {"topic": "朗诵L4", "month": "9月", "headStart": 36, "jlTotal": 17, "release": 11, "leave": 5, "transfer": null, "net": 11, "headEnd": 47, "line1": 22, "leader": 11, "manager": 2, "managerLead": 1}, {"topic": "朗诵L4", "month": "10月", "headStart": 47, "jlTotal": 19, "release": 7, "leave": 7, "transfer": null, "net": 19, "headEnd": 66, "line1": 28, "leader": 14, "manager": 3, "managerLead": 2}, {"topic": "朗诵L4", "month": "11月", "headStart": 66, "jlTotal": 30, "release": 17, "leave": 10, "transfer": null, "net": 23, "headEnd": 89, "line1": 39, "leader": 20, "manager": 4, "managerLead": 3}, {"topic": "朗诵L4", "month": "12月", "headStart": 89, "jlTotal": 22, "release": 20, "leave": 13, "transfer": null, "net": 15, "headEnd": 104, "line1": 53, "leader": 26, "manager": 6, "managerLead": 4}]}, "topRetain": [{"cat": "电商品转化营期", "ck": "ecom", "seq": 1, "camp": "7期", "date": "2026-07-29", "name": "潘春宇", "students": 90, "fullpay": 68, "unit": 3635.5, "rate": 0.756, "isTop": "是", "status": "9月已申请组长转正"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 2, "camp": "7期", "date": "2026-07-29", "name": "王欢欢", "students": 91, "fullpay": 68, "unit": 3601.4, "rate": 0.747, "isTop": "是", "status": "9月已晋升储备组长"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 3, "camp": "9期", "date": "2026-08-26", "name": "王佳宁", "students": 103, "fullpay": 75, "unit": 3565.6, "rate": 0.728, "isTop": "是", "status": "9月已晋升储备组长"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 4, "camp": "7期", "date": "2026-07-29", "name": "李晓萌", "students": 89, "fullpay": 64, "unit": 3452.1, "rate": 0.719, "isTop": "是", "status": "在职-外聘组长"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 5, "camp": "9期", "date": "2026-08-26", "name": "冯金鑫", "students": 105, "fullpay": 73, "unit": 3425.5, "rate": 0.695, "isTop": "是", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 6, "camp": "9期", "date": "2026-08-26", "name": "梁善聪", "students": 107, "fullpay": 74, "unit": 3404.1, "rate": 0.692, "isTop": "是", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 7, "camp": "9期", "date": "2026-08-26", "name": "张岳鹏", "students": 106, "fullpay": 72, "unit": 3294.3, "rate": 0.679, "isTop": "是", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 8, "camp": "7期", "date": "2026-07-29", "name": "吴鸿运", "students": 86, "fullpay": 58, "unit": 3259.5, "rate": 0.674, "isTop": "是", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 9, "camp": "7期", "date": "2026-07-29", "name": "晏闯", "students": 88, "fullpay": 59, "unit": 3354.6, "rate": 0.67, "isTop": "是", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 10, "camp": "7期", "date": "2026-07-29", "name": "雷文杰", "students": 92, "fullpay": 60, "unit": 3132.7, "rate": 0.652, "isTop": "否", "status": "预离职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 11, "camp": "9期", "date": "2026-08-26", "name": "曹年欢", "students": 106, "fullpay": 69, "unit": 3166.3, "rate": 0.651, "isTop": "否", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 12, "camp": "9期", "date": "2026-08-26", "name": "文彦翔", "students": 108, "fullpay": 70, "unit": 3228.9, "rate": 0.648, "isTop": "否", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 13, "camp": "9期", "date": "2026-08-26", "name": "魏乖乖", "students": 105, "fullpay": 66, "unit": 3060.3, "rate": 0.629, "isTop": "否", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 14, "camp": "7期", "date": "2026-07-29", "name": "黄艳红", "students": 89, "fullpay": 55, "unit": 2980.8, "rate": 0.618, "isTop": "否", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 15, "camp": "7期", "date": "2026-07-29", "name": "梁迪赫", "students": 90, "fullpay": 55, "unit": 2975.7, "rate": 0.611, "isTop": "否", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 16, "camp": "7期", "date": "2026-07-29", "name": "焦艺龙", "students": 88, "fullpay": 53, "unit": 2952.5, "rate": 0.602, "isTop": "否", "status": "离职（刘庆接）"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 17, "camp": "7期", "date": "2026-07-29", "name": "杜军伟", "students": 92, "fullpay": 55, "unit": 2905.5, "rate": 0.598, "isTop": "否", "status": "在职"}, {"cat": "电商品转化营期", "ck": "ecom", "seq": 18, "camp": "7期", "date": "2026-07-29", "name": "文博", "students": 88, "fullpay": 48, "unit": 2600.2, "rate": 0.545, "isTop": "否", "status": "预离职"}, {"cat": "大课转化营期", "ck": "big", "seq": 1, "camp": "7期", "date": "2026-08-26", "name": "吴鸿运", "students": 86, "fullpay": 61, "unit": 8217, "rate": 0.709, "isTop": "是", "status": "9月已晋升储备组长"}, {"cat": "大课转化营期", "ck": "big", "seq": 2, "camp": "4期", "date": "2026-07-22", "name": "刘增淳", "students": 118, "fullpay": 79, "unit": 8133.2, "rate": 0.669, "isTop": "是", "status": "9月已晋升储备组长"}, {"cat": "大课转化营期", "ck": "big", "seq": 3, "camp": "7期", "date": "2026-08-26", "name": "晏闯", "students": 88, "fullpay": 58, "unit": 8242.4, "rate": 0.659, "isTop": "是", "status": "9月已晋升储备组长"}, {"cat": "大课转化营期", "ck": "big", "seq": 4, "camp": "4期", "date": "2026-07-22", "name": "杨艳", "students": 111, "fullpay": 72, "unit": 8038.1, "rate": 0.649, "isTop": "是", "status": "在职-储备主管"}, {"cat": "大课转化营期", "ck": "big", "seq": 5, "camp": "4期", "date": "2026-07-22", "name": "赵越", "students": 114, "fullpay": 72, "unit": 7707.9, "rate": 0.632, "isTop": "是", "status": "已转岗"}, {"cat": "大课转化营期", "ck": "big", "seq": 6, "camp": "7期", "date": "2026-08-26", "name": "王欢欢", "students": 91, "fullpay": 57, "unit": 7987.3, "rate": 0.626, "isTop": "是", "status": "9月已晋升储备组长"}, {"cat": "大课转化营期", "ck": "big", "seq": 7, "camp": "7期", "date": "2026-08-26", "name": "杜军伟", "students": 92, "fullpay": 57, "unit": 7750.5, "rate": 0.62, "isTop": "是", "status": "在职"}, {"cat": "大课转化营期", "ck": "big", "seq": 8, "camp": "7期", "date": "2026-08-26", "name": "潘春宇", "students": 90, "fullpay": 55, "unit": 7459, "rate": 0.611, "isTop": "是", "status": "在职-储备组长"}, {"cat": "大课转化营期", "ck": "big", "seq": 9, "camp": "7期", "date": "2026-08-26", "name": "刘庆", "students": 88, "fullpay": 53, "unit": 7766.9, "rate": 0.602, "isTop": "否", "status": "在职"}, {"cat": "大课转化营期", "ck": "big", "seq": 10, "camp": "4期", "date": "2026-07-22", "name": "方晓丽", "students": 117, "fullpay": 69, "unit": 7382.6, "rate": 0.59, "isTop": "否", "status": "在职"}, {"cat": "大课转化营期", "ck": "big", "seq": 11, "camp": "7期", "date": "2026-08-26", "name": "梁迪赫", "students": 90, "fullpay": 53, "unit": 7323.6, "rate": 0.589, "isTop": "否", "status": "在职"}, {"cat": "大课转化营期", "ck": "big", "seq": 12, "camp": "7期", "date": "2026-08-26", "name": "李晓萌", "students": 89, "fullpay": 50, "unit": 6824.4, "rate": 0.562, "isTop": "否", "status": "在职"}, {"cat": "大课转化营期", "ck": "big", "seq": 13, "camp": "7期", "date": "2026-08-26", "name": "黄艳红", "students": 89, "fullpay": 49, "unit": 6519.5, "rate": 0.551, "isTop": "否", "status": "在职"}, {"cat": "大课转化营期", "ck": "big", "seq": 14, "camp": "7期", "date": "2026-08-26", "name": "文博", "students": 88, "fullpay": 47, "unit": 6442.4, "rate": 0.534, "isTop": "否", "status": "预离职"}, {"cat": "大课转化营期", "ck": "big", "seq": 15, "camp": "7期", "date": "2026-08-26", "name": "雷文杰", "students": 92, "fullpay": 49, "unit": 6655.8, "rate": 0.533, "isTop": "否", "status": "预离职"}], "pip": {"hi": [{"topic": "朗诵L4", "camp": "第4期", "coach": "刘增淳", "openDate": "2026-06-08", "w1": 0.7368, "w1pip": "是", "w2": 0.9459, "w2pip": "否", "w3": 0.9099, "w3pip": "否", "w4": 0.9439, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第4期", "coach": "赵越", "openDate": "2026-06-08", "w1": 0.7182, "w1pip": "是", "w2": 0.9369, "w2pip": "否", "w3": 0.9358, "w3pip": "否", "w4": 0.972, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第4期", "coach": "方晓丽", "openDate": "2026-06-08", "w1": 0.7018, "w1pip": "是", "w2": 0.9279, "w2pip": "否", "w3": 0.8909, "w3pip": "是", "w4": 0.9633, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第4期", "coach": "杨艳", "openDate": "2026-06-08", "w1": 0.7798, "w1pip": "是", "w2": 0.9709, "w2pip": "否", "w3": 0.9208, "w3pip": "否", "w4": 0.9604, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "杜军伟(10203712)", "openDate": "2026-07-20", "w1": 0.9286, "w1pip": "否", "w2": 0.9048, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9643, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "文博(10203717)", "openDate": "2026-07-20", "w1": 0.9759, "w1pip": "否", "w2": 0.9268, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9639, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "吴鸿运(10203716)", "openDate": "2026-07-20", "w1": 0.9881, "w1pip": "否", "w2": 0.9524, "w2pip": "否", "w3": null, "w3pip": null, "w4": 1, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "晏闯(10203715)", "openDate": "2026-07-20", "w1": 0.9881, "w1pip": "否", "w2": 0.9286, "w2pip": "否", "w3": null, "w3pip": null, "w4": 1, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "雷文杰（20257862）", "openDate": "2026-07-20", "w1": 0.9524, "w1pip": "否", "w2": 0.8916, "w2pip": "是", "w3": 0.95, "w3pip": "是", "w4": 0.95, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "李晓萌(10203713)", "openDate": "2026-07-20", "w1": 0.9659, "w1pip": "否", "w2": 0.931, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9651, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "刘庆(10203711)", "openDate": "2026-07-20", "w1": 0.954, "w1pip": "否", "w2": 0.8721, "w2pip": "是", "w3": 0.9286, "w3pip": "是", "w4": 0.9762, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "黄艳红(10203710)", "openDate": "2026-07-20", "w1": 0.9881, "w1pip": "否", "w2": 0.9036, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9639, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "王欢欢(10203709)", "openDate": "2026-07-20", "w1": 0.9651, "w1pip": "否", "w2": 0.8953, "w2pip": "是", "w3": 0.9651, "w3pip": "是", "w4": 1, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "潘春宇(10203708)", "openDate": "2026-07-20", "w1": 0.9886, "w1pip": "否", "w2": 0.9294, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9765, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第7期", "coach": "梁迪赫(10203707)", "openDate": "2026-07-21", "w1": 0.9882, "w1pip": "否", "w2": 0.8941, "w2pip": "是", "w3": 0.9647, "w3pip": "是", "w4": 0.9529, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "梁善聪(10207045)", "openDate": "2026-08-17", "w1": 0.9712, "w1pip": "否", "w2": 0.9327, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9904, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "冯金鑫(10207041)", "openDate": "2026-08-17", "w1": 0.9694, "w1pip": "否", "w2": 0.9053, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9677, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "张岳鹏(10207039)", "openDate": "2026-08-17", "w1": 0.95, "w1pip": "否", "w2": 0.88, "w2pip": "是", "w3": 0.95, "w3pip": "是", "w4": 0.97, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "魏乖乖(10207044)", "openDate": "2026-08-17", "w1": 0.9706, "w1pip": "否", "w2": 0.8922, "w2pip": "是", "w3": 0.9706, "w3pip": "是", "w4": 0.951, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "王佳宁(10207043)", "openDate": "2026-08-17", "w1": 1, "w1pip": "否", "w2": 0.9709, "w2pip": "否", "w3": null, "w3pip": null, "w4": 0.9903, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "文彦翔(10207042)", "openDate": "2026-08-17", "w1": 0.97, "w1pip": "否", "w2": 0.8586, "w2pip": "是", "w3": 0.9697, "w3pip": "是", "w4": 0.9798, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第9期", "coach": "曹年欢(10207040)", "openDate": "2026-08-17", "w1": 0.9703, "w1pip": "否", "w2": 0.85, "w2pip": "是", "w3": 0.9697, "w3pip": "是", "w4": 0.9899, "w4pip": "否", "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "晏闯(10214513)", "openDate": "2026-09-14", "w1": 0.9175, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "方晓丽(10214517)", "openDate": "2026-09-14", "w1": 0.9773, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "刘增淳(10214511)", "openDate": "2026-09-14", "w1": 0.932, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "曾鑫(10214516)", "openDate": "2026-09-14", "w1": 0.9579, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "高航(10214515)", "openDate": "2026-09-14", "w1": 0.9767, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "何龙浩(10214514)", "openDate": "2026-09-14", "w1": 0.989, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}, {"topic": "朗诵L4", "camp": "第11期", "coach": "张萍(10214512)", "openDate": "2026-09-14", "w1": 0.9362, "w1pip": "否", "w2": null, "w2pip": null, "w3": null, "w3pip": null, "w4": null, "w4pip": null, "w7": null, "w7pip": null}], "refund": [{"topic": "朗诵L4", "camp": "第4期", "coach": "刘增淳", "openDate": "2026-06-08", "rate": 0.0614, "out": "否"}, {"topic": "朗诵L4", "camp": "第4期", "coach": "赵越", "openDate": "2026-06-08", "rate": 0.0364, "out": "否"}, {"topic": "朗诵L4", "camp": "第4期", "coach": "方晓丽", "openDate": "2026-06-08", "rate": 0.0091, "out": "否"}, {"topic": "朗诵L4", "camp": "第4期", "coach": "杨艳", "openDate": "2026-06-08", "rate": 0.0381, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "文博", "openDate": "2026-07-20", "rate": 0.0682, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "晏闯", "openDate": "2026-07-20", "rate": 0.0682, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "雷文杰", "openDate": "2026-07-20", "rate": 0.1304, "out": "是"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "杜军伟", "openDate": "2026-07-20", "rate": 0.0978, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "刘庆", "openDate": "2026-07-20", "rate": 0.0455, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "王欢欢", "openDate": "2026-07-20", "rate": 0.0549, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "潘春宇", "openDate": "2026-07-20", "rate": 0.0556, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "吴鸿运", "openDate": "2026-07-20", "rate": 0.0465, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "李晓萌", "openDate": "2026-07-20", "rate": 0.0449, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "黄艳红", "openDate": "2026-07-20", "rate": 0.0674, "out": "否"}, {"topic": "朗诵L4", "camp": "第7期", "coach": "梁迪赫", "openDate": "2026-07-21", "rate": 0.0778, "out": "否"}], "ecom": [{"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "杜军伟", "date": "2026-07-29", "d1": 0.3556, "d1m": 0.4091, "d1diff": -0.1308, "pip": "是", "sign": "已签署", "d2": 0.109, "d2m": 0.067, "d2diff": 0.041, "d3": 0.0778, "d3m": 0.0682, "d3diff": 0.01, "d3c": 0.5444, "d3cm": 0.5705, "d3diffc": -0.026, "unpip": "是", "d5": 0.5889, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "文博", "date": "2026-07-29", "d1": 0.3095, "d1m": 0.4091, "d1diff": -0.2435, "pip": "是", "sign": "已签署", "d2": 0.057, "d2m": 0.067, "d2diff": -0.011, "d3": 0.1071, "d3m": 0.0682, "d3diff": 0.039, "d3c": 0.4762, "d3cm": 0.5705, "d3diffc": -0.094, "unpip": "是", "d5": 0.5476, "d5m": 0.6421, "pip2": "是", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "吴鸿运", "date": "2026-07-29", "d1": 0.407, "d1m": 0.4091, "d1diff": -0.0051, "pip": "否", "sign": "无需签署", "d2": 0.081, "d2m": 0.067, "d2diff": 0.014, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "是", "d5": 0.6395, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "晏闯", "date": "2026-07-29", "d1": 0.4773, "d1m": 0.4091, "d1diff": 0.1667, "pip": "否", "sign": "无需签署", "d2": 0.057, "d2m": 0.067, "d2diff": -0.011, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "否", "d5": 0.6591, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "雷文杰", "date": "2026-07-29", "d1": 0.4302, "d1m": 0.4091, "d1diff": 0.0516, "pip": "否", "sign": "无需签署", "d2": 0.076, "d2m": 0.067, "d2diff": 0.009, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "是", "d5": 0.6628, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "李晓萌", "date": "2026-07-29", "d1": 0.3933, "d1m": 0.4091, "d1diff": -0.0386, "pip": "否", "sign": "无需签署", "d2": 0.079, "d2m": 0.067, "d2diff": 0.011, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "是", "d5": 0.6854, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "焦艺龙", "date": "2026-07-29", "d1": 0.3837, "d1m": 0.4091, "d1diff": -0.0621, "pip": "否", "sign": "无需签署", "d2": 0.091, "d2m": 0.067, "d2diff": 0.023, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "是", "d5": 0.5698, "d5m": 0.6421, "pip2": "是", "d8": 0.6047, "d6d8": 0.035, "d8m": 0.6611, "d6d8m": 0.019, "unpip2": "是"}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "黄艳红", "date": "2026-07-29", "d1": 0.3977, "d1m": 0.4091, "d1diff": -0.0279, "pip": "否", "sign": "无需签署", "d2": 0.079, "d2m": 0.067, "d2diff": 0.011, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "是", "d5": 0.6023, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "王欢欢", "date": "2026-07-29", "d1": 0.4382, "d1m": 0.4091, "d1diff": 0.0711, "pip": "否", "sign": "无需签署", "d2": 0.055, "d2m": 0.067, "d2diff": -0.013, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "否", "d5": 0.7303, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "潘春宇", "date": "2026-07-29", "d1": 0.5056, "d1m": 0.4091, "d1diff": 0.2359, "pip": "否", "sign": "无需签署", "d2": 0.044, "d2m": 0.067, "d2diff": -0.023, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "否", "d5": 0.7416, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第7期", "product": "学习机", "coach": "梁迪赫", "date": "2026-07-29", "d1": 0.427, "d1m": 0.4091, "d1diff": 0.0438, "pip": "否", "sign": "无需签署", "d2": 0.067, "d2m": 0.067, "d2diff": -0.001, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": 0.5705, "d3diffc": -0.571, "unpip": "否", "d5": 0.618, "d5m": 0.6421, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "梁善聪", "date": "2026-08-26", "d1": 0.4673, "d1m": 0.4623, "d1diff": 0.0108, "pip": "否", "sign": "无需签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": null, "d3diffc": null, "unpip": null, "d5": 0.6636, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "冯金鑫", "date": "2026-08-26", "d1": 0.5429, "d1m": 0.4623, "d1diff": 0.1743, "pip": "否", "sign": "无需签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": null, "d3diffc": null, "unpip": null, "d5": 0.6762, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "张岳鹏", "date": "2026-08-26", "d1": 0.434, "d1m": 0.4623, "d1diff": -0.0612, "pip": "否", "sign": "无需签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": null, "d3diffc": null, "unpip": null, "d5": 0.6415, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "魏乖乖", "date": "2026-08-26", "d1": 0.419, "d1m": 0.4623, "d1diff": -0.0937, "pip": "否", "sign": "无需签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": null, "d3diffc": null, "unpip": null, "d5": 0.619, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "王佳宁", "date": "2026-08-26", "d1": 0.5049, "d1m": 0.4623, "d1diff": 0.0921, "pip": "否", "sign": "无需签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": null, "d3diffc": null, "unpip": null, "d5": 0.699, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "文彦翔", "date": "2026-08-26", "d1": 0.4537, "d1m": 0.4623, "d1diff": -0.0186, "pip": "否", "sign": "无需签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": null, "d3cm": null, "d3diffc": null, "unpip": null, "d5": 0.6296, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}, {"topic": "朗诵L4", "camp": "第9期", "product": "学习机", "coach": "曹年欢", "date": "2026-08-26", "d1": 0.4151, "d1m": 0.4623, "d1diff": -0.1021, "pip": "是", "sign": "已签署", "d2": null, "d2m": null, "d2diff": null, "d3": null, "d3m": null, "d3diff": null, "d3c": 0.5943, "d3cm": 0.6176, "d3diffc": -0.023, "unpip": "是", "d5": 0.6226, "d5m": 0.65, "pip2": "否", "d8": null, "d6d8": null, "d8m": null, "d6d8m": null, "unpip2": null}], "big": [{"topic": "朗诵L4", "camp": "第4期", "product": "文学作品班", "coach": "刘增淳", "date": "2026-07-22", "d1": 0.4576, "d1m": 0.4348, "d1diff": 0.0524, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.6228, "d5m": 0.5954, "d5diff": 0.046, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.6754, "d10m": 0.6409, "d10diff": 0.0538, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第4期", "product": "文学作品班", "coach": "赵越", "date": "2026-07-22", "d1": 0.4123, "d1m": 0.4348, "d1diff": -0.0517, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5946, "d5m": 0.5954, "d5diff": -0.0013, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.6306, "d10m": 0.6409, "d10diff": -0.0161, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第4期", "product": "文学作品班", "coach": "方晓丽", "date": "2026-07-22", "d1": 0.3932, "d1m": 0.4348, "d1diff": -0.0957, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5545, "d5m": 0.5954, "d5diff": -0.0687, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.6, "d10m": 0.6409, "d10diff": -0.0638, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第4期", "product": "文学作品班", "coach": "杨艳", "date": "2026-07-22", "d1": 0.4865, "d1m": 0.4348, "d1diff": 0.1189, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.6095, "d5m": 0.5954, "d5diff": 0.0237, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.6571, "d10m": 0.6409, "d10diff": 0.0253, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "文博", "date": "2026-08-26", "d1": 0.3295, "d1m": 0.382, "d1diff": -0.1374, "pip": "是", "d2": 0.375, "d2m": 0.4293, "d2diff": -0.1265, "unpip": null, "d3": 0.4091, "d3m": 0.4649, "d3diff": -0.12, "unpip2": "否", "d5": 0.4318, "d5m": 0.5066, "d5diff": -0.1477, "sign5": "是", "d8": 0.4318, "d8m": 0.5443, "d8diff": -0.2067, "unpip8": "否", "note": "已提离职", "d10": 0.5, "d10m": 0.5727, "d10diff": -0.1269, "sign10": "是"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "晏闯", "date": "2026-08-26", "d1": 0.3977, "d1m": 0.382, "d1diff": 0.0411, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5682, "d5m": 0.5066, "d5diff": 0.1216, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.6477, "d10m": 0.5727, "d10diff": 0.131, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "雷文杰", "date": "2026-08-26", "d1": 0.3587, "d1m": 0.382, "d1diff": -0.061, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.4565, "d5m": 0.5066, "d5diff": -0.0989, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.4891, "d10m": 0.5727, "d10diff": -0.146, "sign10": "是"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "杜军伟", "date": "2026-08-26", "d1": 0.3804, "d1m": 0.382, "d1diff": -0.0042, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5761, "d5m": 0.5066, "d5diff": 0.1372, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.6087, "d10m": 0.5727, "d10diff": 0.0629, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "刘庆", "date": "2026-08-26", "d1": 0.4659, "d1m": 0.382, "d1diff": 0.2196, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5341, "d5m": 0.5066, "d5diff": 0.0543, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.5795, "d10m": 0.5727, "d10diff": 0.0119, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "王欢欢", "date": "2026-08-26", "d1": 0.4066, "d1m": 0.382, "d1diff": 0.0644, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5385, "d5m": 0.5066, "d5diff": 0.063, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.5495, "d10m": 0.5727, "d10diff": -0.0405, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "潘春宇", "date": "2026-08-26", "d1": 0.3889, "d1m": 0.382, "d1diff": 0.0181, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5333, "d5m": 0.5066, "d5diff": 0.0527, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.5889, "d10m": 0.5727, "d10diff": 0.0283, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "吴鸿运", "date": "2026-08-26", "d1": 0.4186, "d1m": 0.382, "d1diff": 0.0958, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5349, "d5m": 0.5066, "d5diff": 0.0559, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.686, "d10m": 0.5727, "d10diff": 0.1978, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "李晓萌", "date": "2026-08-26", "d1": 0.3371, "d1m": 0.382, "d1diff": -0.1175, "pip": "是", "d2": 0.3708, "d2m": 0.4293, "d2diff": -0.1363, "unpip": null, "d3": 0.4157, "d3m": 0.4649, "d3diff": -0.1058, "unpip2": "否", "d5": 0.4382, "d5m": 0.5066, "d5diff": -0.135, "sign5": "是", "d8": 0.5169, "d8m": 0.5443, "d8diff": -0.0503, "unpip8": "是", "note": "已降级", "d10": 0.5618, "d10m": 0.5727, "d10diff": -0.019, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "黄艳红", "date": "2026-08-26", "d1": 0.3258, "d1m": 0.382, "d1diff": -0.1471, "pip": "是", "d2": 0.382, "d2m": 0.4293, "d2diff": -0.1102, "unpip": null, "d3": 0.4382, "d3m": 0.4649, "d3diff": -0.0574, "unpip2": "是", "d5": 0.4607, "d5m": 0.5066, "d5diff": -0.0906, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.5281, "d10m": 0.5727, "d10diff": -0.0779, "sign10": "否"}, {"topic": "朗诵L4", "camp": "第7期", "product": "文学作品班", "coach": "梁迪赫", "date": "2026-08-26", "d1": 0.4333, "d1m": 0.382, "d1diff": 0.1343, "pip": "否", "d2": null, "d2m": null, "d2diff": null, "unpip": null, "d3": null, "d3m": null, "d3diff": null, "unpip2": null, "d5": 0.5, "d5m": 0.5066, "d5diff": -0.013, "sign5": "否", "d8": null, "d8m": null, "d8diff": null, "unpip8": null, "note": null, "d10": 0.5667, "d10m": 0.5727, "d10diff": -0.0105, "sign10": "否"}]}, "leaderRank": [{"month": 26.7, "goods": "电商品", "ck": "ecom", "camp": "7期", "manager": "秦祎杭", "leader": "潘春宇", "unit": 3397.4, "rate": 0.7, "rank": 1, "status": "9月已转正"}, {"month": 26.7, "goods": "电商品", "ck": "ecom", "camp": "7期", "manager": "秦祎杭", "leader": "李伟康", "unit": 2978.2, "rate": 0.616, "rank": 2, "status": "已晋升"}, {"month": 26.6, "goods": "电商品", "ck": "ecom", "camp": "4期", "manager": "秦祎杭", "leader": "杨艳", "unit": 2657.1, "rate": 0.552, "rank": 1, "status": "已晋升"}, {"month": 26.7, "goods": "大课", "ck": "big", "camp": "4期", "manager": "秦祎杭", "leader": "杨艳", "unit": 7814, "rate": 0.635, "rank": 1, "status": "已晋升"}], "recruit": [{"owner": "何鸣", "dept": "朗诵L4", "post": "一线", "month": "9月", "needStart": 10, "needAdj": 15, "resume": 46, "interview": 47, "pass": 16, "offer": 6, "entry": 15, "transfer": 0, "complete": 1, "pending": 0, "offerComplete": 1, "gap": 0, "__sum": 0}, {"owner": "何鸣", "dept": "朗诵L4", "post": "组长", "month": "9月", "needStart": 2, "needAdj": 2, "resume": 35, "interview": 0, "pass": 1, "offer": 0, "entry": 3, "transfer": 0, "complete": 1.5, "pending": 0, "offerComplete": 1.5, "gap": 0, "__sum": 0}, {"owner": "何鸣", "dept": "朗诵L4", "post": "经理", "month": "9月", "needStart": 1, "needAdj": 1, "resume": 16, "interview": 0, "pass": 0, "offer": 0, "entry": 0, "transfer": 0, "complete": 0, "pending": 0, "offerComplete": 0, "gap": 1, "__sum": 0}, {"owner": "何鸣", "dept": "一线小计", "post": null, "month": "9月", "needStart": 10, "needAdj": 15, "resume": 46, "interview": 47, "pass": 16, "offer": 6, "entry": 15, "transfer": 0, "complete": 1, "pending": 0, "offerComplete": 1, "gap": 0, "__sum": 1}, {"owner": "何鸣", "dept": "管理小计", "post": null, "month": "9月", "needStart": 1, "needAdj": 1, "resume": 16, "interview": 0, "pass": 0, "offer": 0, "entry": 0, "transfer": 0, "complete": 0, "pending": 0, "offerComplete": 0, "gap": 1, "__sum": 1}, {"owner": "何鸣", "dept": "总计", "post": null, "month": "9月", "needStart": 11, "needAdj": 16, "resume": 62, "interview": 47, "pass": 16, "offer": 6, "entry": 15, "transfer": 0, "complete": 0.9375, "pending": 0, "offerComplete": 0.938, "gap": 1, "__sum": 1}, {"owner": "负责团队总计", "dept": null, "post": null, "month": "9月", "needStart": 43, "needAdj": 48, "resume": 188, "interview": 138, "pass": 31, "offer": 9, "entry": 42, "transfer": 4, "complete": 0.875, "pending": 0, "offerComplete": 0.958, "gap": 2, "__sum": 1}, {"owner": "何鸣", "dept": "朗诵L4", "post": "一线", "month": "8月", "needStart": 4, "needAdj": 4, "resume": 20, "interview": 15, "pass": 6, "offer": 1, "entry": 4, "transfer": 5, "complete": 1, "pending": 2, "offerComplete": 2.75, "gap": 0, "__sum": 0}, {"owner": "何鸣", "dept": "有声陪跑L3", "post": "一线", "month": "8月", "needStart": 0, "needAdj": 0, "resume": 20, "interview": 5, "pass": 0, "offer": 0, "entry": 0, "transfer": 0, "complete": "—", "pending": 0, "offerComplete": "—", "gap": "—", "__sum": 0}, {"owner": "何鸣", "dept": "朗诵L4", "post": "管理", "month": "8月", "needStart": 3, "needAdj": 3, "resume": 197, "interview": 16, "pass": 4, "offer": 2, "entry": 3, "transfer": 0, "complete": 1, "pending": 0, "offerComplete": 1, "gap": 0, "__sum": 0}, {"owner": "何鸣", "dept": "一线小计", "post": null, "month": "8月", "needStart": null, "needAdj": 4, "resume": 40, "interview": 20, "pass": 6, "offer": 1, "entry": 4, "transfer": 5, "complete": 1, "pending": 2, "offerComplete": 2.75, "gap": 0, "__sum": 1}, {"owner": "何鸣", "dept": "管理小计", "post": null, "month": "8月", "needStart": null, "needAdj": 3, "resume": 197, "interview": 16, "pass": 4, "offer": 2, "entry": 3, "transfer": 0, "complete": 1, "pending": 0, "offerComplete": 1, "gap": 0, "__sum": 1}, {"owner": "何鸣", "dept": "总计", "post": null, "month": "8月", "needStart": null, "needAdj": 7, "resume": 237, "interview": 36, "pass": 10, "offer": 3, "entry": 7, "transfer": 5, "complete": 1, "pending": 2, "offerComplete": 2, "gap": 0, "__sum": 1}, {"owner": null, "dept": "负责团队总计", "post": null, "month": "8月", "needStart": null, "needAdj": 40, "resume": 717, "interview": 236, "pass": 48, "offer": 37, "entry": 41, "transfer": 18, "complete": 1.025, "pending": 3, "offerComplete": 1.55, "gap": 0, "__sum": 1}], "org": {"l1": "教学中心", "l2": "声音技能交付部", "team": {"name": "有声演播陪跑课题一团", "owner": "何鸣", "size": 55.0}, "kts": [{"name": "L3有声陪跑课题", "size": 12.0, "mgrs": [{"arc": "驰声拓疆", "level": "储备主管", "mgr": "方心", "since": "2026-07-01", "span": 11.0, "groups": [{"name": "决胜千里", "level": "储备组长", "lead": "夏楚兵", "since": "2026-08-01", "out": "", "hire": null, "camp": "L3有声陪跑95期", "span": 3.0, "newPct": 0.0, "planners": [{"n": "周健城", "t": ""}, {"n": "万文静", "t": ""}, {"n": "兰甜甜", "t": ""}], "plannerCnt": 3, "newCnt": 0, "trCnt": 0}]}], "span": 3.0, "grpCnt": 1, "mgrCnt": 1, "pct": 0.2182}, {"name": "朗诵L4课题", "size": 42.0, "mgrs": [{"arc": "驰声拓疆", "level": "储备主管", "mgr": "方心", "since": "2026-07-01", "span": 11.0, "groups": [{"name": "钱途无量", "level": "教学组长", "lead": "李晓萌", "since": "2026-07-01", "out": "", "hire": null, "camp": "朗诵L4-14期", "span": 2.0, "newPct": 0.0, "planners": [{"n": "程颖", "t": "新人"}, {"n": "阳洪云", "t": ""}], "plannerCnt": 2, "newCnt": 1, "trCnt": 0}, {"name": "决胜千里", "level": "储备组长", "lead": "夏楚兵", "since": "2026-08-01", "out": "", "hire": null, "camp": "朗诵L4-14期", "span": 4.0, "newPct": 0.5, "planners": [{"n": "赵新源", "t": "新人"}, {"n": "李旭鑫", "t": "新人"}, {"n": "李坊平", "t": ""}, {"n": "梁迪赫", "t": ""}], "plannerCnt": 4, "newCnt": 2, "trCnt": 0}]}, {"arc": "炜晔鸿途", "level": "储备主管", "mgr": "李伟康", "since": "2026-08-01", "span": 19.0, "groups": [{"name": "云宇之上", "level": "储备组长", "lead": "潘春宇", "since": "2026-07-01", "out": "温向阳", "hire": "2026-08-01", "camp": "朗诵L4-13期", "span": 6.0, "newPct": 0.5, "planners": [{"n": "杜军伟", "t": ""}, {"n": "刘庆", "t": ""}, {"n": "冶玉兴", "t": "新人"}, {"n": "孙浩", "t": "转入"}, {"n": "陈涛", "t": "新人"}, {"n": "温岚", "t": "新人"}], "plannerCnt": 6, "newCnt": 3, "trCnt": 1}, {"name": "淳心聚力", "level": "储备组长", "lead": "刘增淳", "since": "2026-09-01", "out": "曾鑫", "hire": "2026-08-01", "camp": "朗诵L4-11期", "span": 2.0, "newPct": 0.5, "planners": [{"n": "张萍", "t": ""}, {"n": "何龙浩", "t": "新人"}], "plannerCnt": 2, "newCnt": 1, "trCnt": 0}, {"name": "胜者为王", "level": "储备组长", "lead": "王欢欢", "since": "2026-09-01", "out": "邱罗鑫", "hire": "2026-08-01", "camp": "朗诵L4-13期", "span": 2.0, "newPct": 0.0, "planners": [{"n": "黄伟国", "t": ""}, {"n": "徐敏", "t": "转入"}], "plannerCnt": 2, "newCnt": 0, "trCnt": 1}, {"name": "亿鸣惊人", "level": "储备组长", "lead": "晏闯", "since": "2026-09-01", "out": "", "hire": null, "camp": "朗诵L4-11期", "span": 2.0, "newPct": 0.0, "planners": [{"n": "方晓丽", "t": ""}, {"n": "高航", "t": "转入"}], "plannerCnt": 2, "newCnt": 0, "trCnt": 1}]}, {"arc": "一路向北ProMax", "level": "储备主管", "mgr": "杨艳", "since": "2026-08-01", "span": 21.0, "groups": [{"name": "鹏程似锦", "level": "储备组长", "lead": "张岳鹏", "since": "2026-08-01", "out": "刘述财", "hire": "2026-09-01", "camp": "朗诵L4-9期/15期", "span": 2.0, "newPct": 0.0, "planners": [{"n": "梁善聪", "t": ""}, {"n": "冯金鑫", "t": ""}], "plannerCnt": 2, "newCnt": 0, "trCnt": 0}, {"name": "扬帆起航", "level": "", "lead": "", "since": null, "out": "", "hire": null, "camp": "朗诵L4-9期", "span": 10.0, "newPct": 0.9, "planners": [{"n": "黄艳红", "t": ""}, {"n": "韩攀龙", "t": "新人"}, {"n": "张凯悦", "t": "新人"}, {"n": "尹腾力", "t": "新人"}, {"n": "汤梓艺", "t": "新人"}, {"n": "曾慧茜", "t": "新人"}, {"n": "黄振", "t": "新人"}, {"n": "王家骏", "t": "新人"}, {"n": "陈嘉伟", "t": "新人"}, {"n": "都晓楠", "t": "新人"}], "plannerCnt": 10, "newCnt": 9, "trCnt": 0}, {"name": "鸿运当头", "level": "储备组长", "lead": "吴鸿运", "since": "2026-09-01", "out": "谷明亮", "hire": "2026-09-01", "camp": "朗诵L4-15期", "span": 1.0, "newPct": 1.0, "planners": [{"n": "蒋友为", "t": "新人"}], "plannerCnt": 1, "newCnt": 1, "trCnt": 0}, {"name": "钱潮奔涌", "level": "储备组长", "lead": "王佳宁", "since": "2026-09-01", "out": "", "hire": null, "camp": "朗诵L4-9期", "span": 3.0, "newPct": 0.6667, "planners": [{"n": "曹年欢", "t": ""}, {"n": "魏乖乖", "t": "新人"}, {"n": "文彦翔", "t": "新人"}], "plannerCnt": 3, "newCnt": 2, "trCnt": 0}]}], "span": 34.0, "grpCnt": 10, "mgrCnt": 3, "pct": 0.7636}, {"name": "L3孵化课题", "size": 1.0, "mgrs": [{"arc": "暂未配置主管", "level": "", "mgr": "", "since": null, "span": 0, "groups": [{"name": "财锋所向", "level": "", "lead": "", "since": null, "out": "", "hire": null, "camp": "", "span": 1.0, "newPct": 0.0, "planners": [{"n": "张婷娟", "t": ""}], "plannerCnt": 1, "newCnt": 0, "trCnt": 0}]}], "span": 1.0, "grpCnt": 1, "mgrCnt": 0, "pct": 0.0182}], "rows": [{"kt": "L3有声陪跑课题", "arc": "驰声拓疆", "mgr": "方心", "level": "储备主管", "name": "决胜千里", "leadLevel": "储备组长", "lead": "夏楚兵", "since": "2026-08-01", "out": "", "hire": null, "camp": "L3有声陪跑95期", "span": 3.0, "newPct": 0.0, "planners": ["周健城", "万文静", "兰甜甜"], "plannerCnt": 3}, {"kt": "朗诵L4课题", "arc": "驰声拓疆", "mgr": "方心", "level": "储备主管", "name": "钱途无量", "leadLevel": "教学组长", "lead": "李晓萌", "since": "2026-07-01", "out": "", "hire": null, "camp": "朗诵L4-14期", "span": 2.0, "newPct": 0.0, "planners": ["程颖", "阳洪云"], "plannerCnt": 2}, {"kt": "朗诵L4课题", "arc": "驰声拓疆", "mgr": "方心", "level": "储备主管", "name": "决胜千里", "leadLevel": "储备组长", "lead": "夏楚兵", "since": "2026-08-01", "out": "", "hire": null, "camp": "朗诵L4-14期", "span": 4.0, "newPct": 0.5, "planners": ["赵新源", "李旭鑫", "李坊平", "梁迪赫"], "plannerCnt": 4}, {"kt": "朗诵L4课题", "arc": "炜晔鸿途", "mgr": "李伟康", "level": "储备主管", "name": "云宇之上", "leadLevel": "储备组长", "lead": "潘春宇", "since": "2026-07-01", "out": "温向阳", "hire": "2026-08-01", "camp": "朗诵L4-13期", "span": 6.0, "newPct": 0.5, "planners": ["杜军伟", "刘庆", "冶玉兴", "孙浩", "陈涛", "温岚"], "plannerCnt": 6}, {"kt": "朗诵L4课题", "arc": "炜晔鸿途", "mgr": "李伟康", "level": "储备主管", "name": "淳心聚力", "leadLevel": "储备组长", "lead": "刘增淳", "since": "2026-09-01", "out": "曾鑫", "hire": "2026-08-01", "camp": "朗诵L4-11期", "span": 2.0, "newPct": 0.5, "planners": ["张萍", "何龙浩"], "plannerCnt": 2}, {"kt": "朗诵L4课题", "arc": "炜晔鸿途", "mgr": "李伟康", "level": "储备主管", "name": "胜者为王", "leadLevel": "储备组长", "lead": "王欢欢", "since": "2026-09-01", "out": "邱罗鑫", "hire": "2026-08-01", "camp": "朗诵L4-13期", "span": 2.0, "newPct": 0.0, "planners": ["黄伟国", "徐敏"], "plannerCnt": 2}, {"kt": "朗诵L4课题", "arc": "炜晔鸿途", "mgr": "李伟康", "level": "储备主管", "name": "亿鸣惊人", "leadLevel": "储备组长", "lead": "晏闯", "since": "2026-09-01", "out": "", "hire": null, "camp": "朗诵L4-11期", "span": 2.0, "newPct": 0.0, "planners": ["方晓丽", "高航"], "plannerCnt": 2}, {"kt": "朗诵L4课题", "arc": "一路向北ProMax", "mgr": "杨艳", "level": "储备主管", "name": "鹏程似锦", "leadLevel": "储备组长", "lead": "张岳鹏", "since": "2026-08-01", "out": "刘述财", "hire": "2026-09-01", "camp": "朗诵L4-9期/15期", "span": 2.0, "newPct": 0.0, "planners": ["梁善聪", "冯金鑫"], "plannerCnt": 2}, {"kt": "朗诵L4课题", "arc": "一路向北ProMax", "mgr": "杨艳", "level": "储备主管", "name": "扬帆起航", "leadLevel": "", "lead": "", "since": null, "out": "", "hire": null, "camp": "朗诵L4-9期", "span": 10.0, "newPct": 0.9, "planners": ["黄艳红", "韩攀龙", "张凯悦", "尹腾力", "汤梓艺", "曾慧茜", "黄振", "王家骏", "陈嘉伟", "都晓楠"], "plannerCnt": 10}, {"kt": "朗诵L4课题", "arc": "一路向北ProMax", "mgr": "杨艳", "level": "储备主管", "name": "鸿运当头", "leadLevel": "储备组长", "lead": "吴鸿运", "since": "2026-09-01", "out": "谷明亮", "hire": "2026-09-01", "camp": "朗诵L4-15期", "span": 1.0, "newPct": 1.0, "planners": ["蒋友为"], "plannerCnt": 1}, {"kt": "朗诵L4课题", "arc": "一路向北ProMax", "mgr": "杨艳", "level": "储备主管", "name": "钱潮奔涌", "leadLevel": "储备组长", "lead": "王佳宁", "since": "2026-09-01", "out": "", "hire": null, "camp": "朗诵L4-9期", "span": 3.0, "newPct": 0.6667, "planners": ["曹年欢", "魏乖乖", "文彦翔"], "plannerCnt": 3}, {"kt": "L3孵化课题", "arc": "暂未配置主管", "mgr": "", "level": "", "name": "财锋所向", "leadLevel": "", "lead": "", "since": null, "out": "", "hire": null, "camp": "", "span": 1.0, "newPct": 0.0, "planners": ["张婷娟"], "plannerCnt": 1}], "stat": {"total": 55.0, "kt": 3, "mgr": 3, "lead": 9, "group": 11, "unit": 12, "span": 38.0, "out": 5, "planner": 38, "newCnt": 19, "newPct": 0.5, "trCnt": 3}}};</script>
+<script>
+/* ==================== 人力数据（index-v2 集成）· 独立作用域 ==================== */
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+var HRC={grid:'#cbd5e1',axis:'#64748b',title:'#334155',sub:'#475569',dim:'#94a3b8',ink:'#0f172a',bg:'#ffffff',panel2:'#f1f5f9'};
+var SVC_GOOD_L=[[0,239,246,255],[0.5,191,219,254],[1,96,165,250]], SVC_BAD_L=[[0,255,237,213],[0.5,251,146,60],[1,194,65,12]];
+var SVC_GOOD_D=[[0,24,49,80],[0.5,14,116,180],[1,96,165,250]], SVC_BAD_D=[[0,74,37,10],[0.5,180,83,9],[1,234,88,12]];
+function hrSetTheme(light){
+  HRC = light
+    ? {grid:'#e2e8f0',axis:'#64748b',title:'#334155',sub:'#475569',dim:'#94a3b8',ink:'#0f172a',bg:'#ffffff',panel2:'#f1f5f9'}
+    : {grid:'#24395c',axis:'#8b9bb5',title:'#c7d3e6',sub:'#a3b1c9',dim:'#6b7c96',ink:'#e6edf7',bg:'#111d31',panel2:'#152238'};
+  SVC_RAMP_GOOD = light ? SVC_GOOD_L : SVC_GOOD_D;
+  SVC_RAMP_BAD  = light ? SVC_BAD_L  : SVC_BAD_D;
+}
+function hrData(){ return window.__HR_DATA__ || {}; }
+function hrArr(a){ return Array.isArray(a) ? a : []; }
+function hrN(v){ const n=Number(v); return isFinite(n)? n : 0; }
+function hrSum(a,f){ return hrArr(a).reduce(function(s,x){ return s + (f ? hrN(f(x)) : hrN(x)); }, 0); }
+function hrAvg(a,f){ return hrArr(a).length ? hrSum(a,f)/hrArr(a).length : 0; }
+function hrDistinct(a,f){ const s={},o=[]; hrArr(a).forEach(function(x){ const k=f?f(x):x; if(k!=null&&!s[k]){ s[k]=1; o.push(k); } }); return o; }
+function hrKpi(t,v,u,m,kc){
+  return '<div class="kpi"'+(kc?' style="--kc:'+kc+'"':'')+'><div class="k-t">'+esc(t)+'</div>'
+       + '<div class="k-v">'+v+(u?'<small>'+esc(u)+'</small>':'')+'</div>'
+       + (m?'<div class="k-m">'+m+'</div>':'')+'</div>';
+}
+function hrHeatTable(elWrap, rows, cols){
+  if(!elWrap) return;
+  let h='<table class="hr-heat"><thead><tr><th class="rowh">'+esc(cols.rowh||'')+'</th>';
+  cols.items.forEach(function(c){
+    h+='<th>'+esc(c.name)+'<span class="hd-dir">'+(c.bad?'深=需关注':'深=更优')+'</span></th>';
+  });
+  h+='</tr></thead><tbody>';
+  rows.forEach(function(r){
+    h+='<tr><td class="rowh">'+(r.html || esc(r.label))+'</td>';
+    cols.items.forEach(function(c,ci){
+      const cell=r.vals[ci];
+      if(cell==null||(typeof cell==='number'&&!isFinite(cell))){ h+='<td class="hcell empty">—</td>'; return; }
+      const vs=rows.map(function(x){ return hrN(x.vals[ci]); }).filter(function(x){ return isFinite(x); });
+      const lo=Math.min.apply(null,vs), hi=Math.max.apply(null,vs);
+      let st=''; try{ const cc=svcCellBg(hrN(cell), !!c.bad, lo, hi); st='background:'+cc.bg+';color:'+cc.fg; }catch(e){ st=''; }
+      h+='<td class="hcell" style="'+st+'">'+esc(cell.disp!=null?cell.disp:cell)+'</td>';
+    });
+    h+='</tr>';
+  });
+  h+='</tbody></table>'
+   + '<div class="hr-heat-tip">每列按本视图 min~max 独立归一化（列内可比，列间不可比）· 深色=该列极值方向</div>';
+  elWrap.innerHTML=h;
+}
+function hrNote(id, html){ const k=String(id==null?'':id); const el=$(k.charAt(0)==='#'?k:'#'+k); if(el) el.innerHTML=html; }
+function hrSafe(name, fn){ try{ fn(); }catch(e){ console.error('[人力数据·'+name+']', e); } }
+function hrFte(r){ return hrN(r['新人'])*0.8 + hrN(r['老人']) + hrN(r['组长'])*0.5; }
+function renderHr(){
+  const D=hrData();
+  const JL=D.jieLiang||{}, jlRows=hrArr(JL.rows), jlTrend=hrArr(JL.trend);
+  const top=hrArr(D.topRetain);
+  const pip=D.pip||{};
+  const hi=hrArr(pip.hi), refund=hrArr(pip.refund), ecom=hrArr(pip.ecom), big=hrArr(pip.big);
+  const leaders=hrArr(D.leaderRank);
+  const recruit=hrArr(D.recruit);
+  /* 汇总行判定：数据侧已打 __sum 标记；文本兜底覆盖「总计 / 小计 / 负责团队总计」 */
+  const isTotal=function(r){ if(!r) return false; if(r.__sum===1||r.__sum==='1') return true;
+    return /总计|小计/.test(String(r.camp||r.dept||r.topic||r.owner||'')); };
+  function hrGap(n){ n=hrN(n); if(!n) return '<span style="color:var(--dim)">0</span>'; return '<span style="color:'+(n>0?'#ef4444':'#22c55e')+';font-weight:700">'+fmt(n,0)+(n>0?' ▲':' ▼')+'</span>'; }
+  function pipTag(v){ v=String(v==null?'':v); if(v==='是') return '<span class="hr-tag t-warn">是</span>'; if(v==='否') return '<span class="hr-tag t-ok">否</span>'; return '<span class="hr-tag t-gray">'+esc(v)+'</span>'; }
+  function diffCell(v){ if(v==null||v==='') return '<span style="color:var(--dim)">—</span>'; v=Number(v);
+    if(!isFinite(v)) return '<span style="color:var(--dim)">—</span>';
+    if(v===0) return '<span style="color:var(--dim)">0</span>'; const good=v>=0; return '<span style="color:'+(good?'#22c55e':'#ef4444')+';font-weight:700">'+(good?'+':'')+fmtPct(v,1)+'</span>'; }
+  /* 结论卡 / 胶囊 / 状态配色 */
+  function hrBrief(id, tone, html){
+    const k=String(id==null?'':id); const el=$(k.charAt(0)==='#'?k:'#'+k); if(!el) return;
+    el.className='hr-brief '+(tone||'');
+    el.innerHTML='<div class="hb-ico"></div><div class="hb-bd">'+html+'</div>';
+  }
+  function hrChip(c,label,val){ return '<span class="hr-chip" style="--cc:'+c+'"><i></i>'+esc(label)+'<b>'+val+'</b></span>'; }
+  function hrTone(s){ s=String(s==null?'':s);
+    if(/离职|淘汰|风险|未达标/.test(s)) return 't-bad';
+    if(/晋升|转正|提拔|优秀/.test(s)) return 't-ok';
+    if(/观察|预警|PIP|待定/.test(s)) return 't-warn';
+    if(/在职|稳定|正常/.test(s)) return 't-blue';
+    return 't-gray'; }
+  function hrTable(boxId, cols, rows){
+    const box=document.getElementById(boxId); if(!box) return;
+    const stat={};
+    cols.forEach(function(c){ if(!c.heat) return; let lo=Infinity,hi= -Infinity;
+      rows.forEach(function(r){ if(isTotal(r)) return; const v=Number(r[c.k]); if(isFinite(v)){ lo=Math.min(lo,v); hi=Math.max(hi,v); } });
+      stat[c.k]={lo:lo,hi:hi}; });
+    /* 列对齐：默认居中（防读错列），c.al==='l' 显式左对齐；首列粘性 */
+    function tcls(c,i){ const a=[]; if(i===0) a.push('stk'); a.push(c.al==='l'?'tl':(c.num?'num':'c')); return a.join(' '); }
+    let h='<table class="hr-t"><thead><tr>';
+    cols.forEach(function(c,i){ h+='<th class="'+(i===0?'stk':'')+'"'+(c.w?' style="width:'+c.w+'"':'')+'>'+esc(c.name)+(c.dir?'<span class="hd-dir">'+c.dir+'</span>':'')+'</th>'; });
+    h+='</tr></thead><tbody>';
+    rows.forEach(function(r){
+      h+='<tr'+(r.__cls?' class="'+r.__cls+'"':'')+'>';
+      cols.forEach(function(c,ci){
+        if(c.html){ h+='<td class="'+tcls(c,ci)+'">'+c.html(r)+'</td>'; return; }
+        const v=r[c.k];
+        if(c.heat && stat[c.k] && v!=null && v!=='' && isFinite(Number(v))){
+          try{ const cc=svcCellBg(Number(v), !!c.bad, stat[c.k].lo, stat[c.k].hi);
+            h+='<td class="hcell '+(ci===0?'stk ':'')+tcls(c,ci)+'" style="background:'+cc.bg+';color:'+cc.fg+'">'+(c.fmt?c.fmt(v):esc(v))+'</td>'; }
+          catch(e){ h+='<td class="'+tcls(c,ci)+'">'+(c.fmt?c.fmt(v):esc(v))+'</td>'; }
+        } else {
+          h+='<td class="'+tcls(c,ci)+'">'+(v==null||v===''?'<span class="em">—</span>':(c.fmt?c.fmt(v):esc(v)))+'</td>';
+        }
+      });
+      h+='</tr>';
+    });
+    h+='</tbody></table>';
+    box.innerHTML=h;
+  }
+
+  /* 总览 KPI */
+  hrSafe('KPI', function(){
+    const det=jlRows.filter(function(r){ return !isTotal(r); });
+    const need=hrSum(det,function(r){return hrN(r.need);});
+    const gap1=hrSum(det,function(r){return hrN(r.gap1);});
+    const satisfy=hrAvg(det,function(r){return hrN(r.satisfy);});
+    /* 招聘只统计明细行（排除 一线小计 / 管理小计 / 总计 / 负责团队总计） */
+    const recDet=recruit.filter(function(r){ return !isTotal(r); });
+    const recruitGap=hrSum(recDet,function(r){return hrN(r.gap);});
+    const recEntry=hrSum(recDet,function(r){return hrN(r.entry);});
+    const topEcom=top.filter(function(r){return r.ck==='ecom'||/电商品/.test(String(r.cat||''));});
+    const pipFocus=hi.filter(function(r){return String(r.w1pip)==='是';}).length
+      +refund.filter(function(r){return String(r.out)==='是';}).length
+      +ecom.filter(function(r){return String(r.pip)==='是';}).length
+      +big.filter(function(r){return String(r.pip)==='是';}).length;
+    let h='';
+    h+=hrKpi('总需求接量', fmt(need,0),'人','已安排一线 '+fmt(hrSum(det,function(r){return hrN(r.yx);}),0)+' 人','#3b82f6');
+    h+=hrKpi('一线缺口', fmt(gap1,0),'人','接量满足率均值 '+fmtPct(satisfy,0),'#ef4444');
+    h+=hrKpi('TOP留存教练', fmt(top.length,0),'人','电商品 '+topEcom.length+' · 大课 '+(top.length-topEcom.length),'#22c55e');
+    h+=hrKpi('PIP需关注', fmt(pipFocus,0),'人次','高互动/退费/复购需签PIP','#f97316');
+    h+=hrKpi('干部排名', fmt(leaders.length,0),'人','组长维度 · 电商品'+leaders.filter(function(r){return r.ck==='ecom';}).length+' / 大课'+leaders.filter(function(r){return r.ck==='big';}).length,'#a855f7');
+    h+=hrKpi('招聘缺口', fmt(recruitGap,0),'人','累计入职 '+fmt(recEntry,0)+' 人（明细口径）','#0ea5e9');
+    const kb=$('#hrKpis'); if(kb) kb.innerHTML=h;
+    const hd=$('#hrHeadNote'); if(hd) hd.innerHTML='数据源 <span class="hr-tag t-blue">'+esc(D.src||'人力数据底表')+'</span> · 版本 '+esc(D.ver||'—')+' · 课题 <b>朗诵L4</b>';
+    /* 总览结论卡：一句话 + 关键胶囊 */
+    const recNeed=hrSum(recDet,function(r){return hrN(r.needAdj);});
+    const recRate=recNeed?recEntry/recNeed:0;
+    const riskLeave=top.filter(function(r){return /离职/.test(String(r.status||''));}).length;
+    hrBrief('hrBriefTop','b-sky','<div class="hb-t">本期人力健康度总览</div>'
+      +'<div class="hb-x">接量端需求 <b>'+fmt(need,0)+'</b> 人、已安排一线 <b>'+fmt(hrSum(det,function(r){return hrN(r.yx);}),0)+'</b> 人，'
+      +'满足率均值 <b class="'+(satisfy>=1?'up':'dn')+'">'+fmtPct(satisfy,0)+'</b>，一线仍缺 <b class="dn">'+fmt(gap1,0)+'</b> 人；'
+      +'管理端 PIP 需关注 <b>'+fmt(pipFocus,0)+'</b> 人次，TOP 教练中 <b class="'+(riskLeave?'dn':'up')+'">'+fmt(riskLeave,0)+'</b> 人有预离职信号；'
+      +'供给端校准需求 <b>'+fmt(recNeed,0)+'</b> 人、已入职 <b>'+fmt(recEntry,0)+'</b> 人（达成 <b class="'+(recRate>=1?'up':'dn')+'">'+fmtPct(recRate,0)+'</b>），剩余缺口 <b>'+fmt(recruitGap,0)+'</b> 人。</div>'
+      +'<div class="hr-chips">'
+      +hrChip('#3b82f6','接量满足率',fmtPct(satisfy,0))
+      +hrChip('#ef4444','一线缺口',fmt(gap1,0)+' 人')
+      +hrChip('#f97316','PIP 需关注',fmt(pipFocus,0)+' 人次')
+      +hrChip('#22c55e','TOP 教练',fmt(top.length,0)+' 人')
+      +hrChip('#a855f7','干部在榜',fmt(leaders.length,0)+' 人')
+      +hrChip('#0ea5e9','招聘达成',fmtPct(recRate,0))
+      +'</div>');
+  });
+
+  /* 1 接量在职情况 */
+  hrSafe('接量', function(){
+    const cols=[
+      {k:'camp',name:'营期',w:'70px'},
+      {k:'total',name:'总量级',num:true},
+      {k:'perCap',name:'人均量级',num:true},
+      {k:'need',name:'需求接量',num:true},
+      {k:'arr',name:'已安排(一线/组长/主管)',html:function(r){return hrN(r.yx)+' / '+hrN(r.zz)+' / '+hrN(r.zg);}},
+      {k:'gap',name:'缺口(一线/组长/主管)',html:function(r){return hrGap(r.gap1)+' / '+hrGap(r.gapZz)+' / '+hrGap(r.gapZg);}},
+      {k:'satisfy',name:'接量满足率',heat:true,bad:false,fmt:function(v){return fmtPct(v,0);},dir:'深=更优'},
+      {k:'jdate',name:'接量日期',html:function(r){return esc(r.jdate||'—');}},
+      {k:'judge',name:'自动判定',html:function(r){return '<span class="hr-tag '+(/缺/.test(String(r.judge))?'t-warn':'t-ok')+'">'+esc(r.judge||'—')+'</span>';}}
+    ];
+    jlRows.forEach(function(r){ if(isTotal(r)) r.__cls='hr-total'; });
+    hrTable('hrJlTable', cols, jlRows);
+    const tr=$('#hrJlTrend');
+    if(tr && jlTrend.length) comboChart(tr,{cats:jlTrend.map(function(r){return r.month;}),h:300,labels:true,
+      bar:{name:'在职人数（月底）',values:jlTrend.map(function(r){return hrN(r.headEnd);}),color:'#3b82f6'},
+      line:{name:'净增长',values:jlTrend.map(function(r){return hrN(r.net);}),color:'#22c55e'}});
+    const sg=$('#hrJlStruct');
+    if(sg){
+      const jd=jlRows.filter(function(r){return !isTotal(r);});
+      const yx=hrSum(jd,function(r){return hrN(r.yx);});
+      const zz=hrSum(jd,function(r){return hrN(r.zz);});
+      const zg=hrSum(jd,function(r){return hrN(r.zg);});
+      donutChart(sg,[{name:'一线',value:yx,color:'#3b82f6'},{name:'组长',value:zz,color:'#22c55e'},{name:'主管',value:zg,color:'#f59e0b'}],'已安排合计',fmt(yx+zz+zg,0)+' 人');
+    }
+    const g1=hrSum(jlRows.filter(function(r){return !isTotal(r);}),function(r){return hrN(r.gap1);});
+    const need=hrSum(jlRows.filter(function(r){return !isTotal(r);}),function(r){return hrN(r.need);});
+    const camps=jlRows.filter(function(r){return !isTotal(r)&&r.camp;}).map(function(r){return r.camp;});
+    const zgLack=jlRows.filter(function(r){return !isTotal(r)&&hrN(r.gapZg)>0;}).map(function(r){return r.camp;});
+    const zzLack=jlRows.filter(function(r){return !isTotal(r)&&hrN(r.gapZz)>0;}).map(function(r){return r.camp;});
+    hrNote('hrNoteJl','<b>接量判读：</b>'+(camps.length?esc(camps.join(' / ')):'当前')+' 合计需求接量 <b>'+fmt(need,0)+'</b> 人，'
+      +'已安排一线 '+fmt(hrSum(jlRows.filter(function(r){return !isTotal(r);}),function(r){return hrN(r.yx);}),0)+' 人，'
+      +'一线缺口 <b>'+fmt(g1,0)+'</b> 人，接量满足率均值 <b>'+fmtPct(hrAvg(jlRows.filter(function(r){return !isTotal(r);}),function(r){return hrN(r.satisfy);}),0)+'</b>。'
+      +(zgLack.length?'<b>'+esc(zgLack.join('、'))+' 存在主管缺口</b>，需提前补位，避免接量前主管不到位；':'各营期组长/主管均已按编制配齐；')
+      +(zzLack.length?'<b>'+esc(zzLack.join('、'))+' 组长有缺口</b>。':'')
+      +'分月趋势看 '+esc(String(jlTrend.length?jlTrend[0].month:''))+'→'+esc(String(jlTrend.length?jlTrend[jlTrend.length-1].month:''))
+      +' 在职人数（月底）由 '+fmt(jlTrend.length?hrN(jlTrend[0].headEnd):0,0)+' 增至 '+fmt(jlTrend.length?hrN(jlTrend[jlTrend.length-1].headEnd):0,0)+'，净增长持续为正，团队处于扩张通道。');
+  });
+
+  /* 2 TOP留存（电商品 / 大课 两个口径，单产不可跨口径比较） */
+  hrSafe('TOP留存', function(){
+    const CK={ecom:{n:'电商品转化营期',c:'#22c55e'}, big:{n:'大课转化营期',c:'#8b5cf6'}};
+    function pick(ck){ return top.filter(function(r){ return r.ck===ck; }); }
+    function drawTop(ck){
+      const cfg=CK[ck]||CK.ecom;
+      const trows=pick(ck).slice().sort(function(a,b){return hrN(b.unit)-hrN(a.unit);});
+      const rows=trows.map(function(r,i){
+        return {no:i+1,camp:r.camp,name:r.name,students:r.students,fullpay:r.fullpay,
+                unit:r.unit,rate:r.rate,isTop:r.isTop,status:r.status};
+      });
+      const cols=[
+        {k:'no',name:'名次',w:'48px',html:function(r){return r.no<=3?'<span class="hr-tag t-ok">'+r.no+'</span>':String(r.no);}},
+        {k:'camp',name:'营期',w:'60px'},
+        {k:'name',name:'姓名',html:function(r){return '<b>'+esc(r.name)+'</b>';}},
+        {k:'students',name:'学员数',num:true},
+        {k:'fullpay',name:'全款人数',num:true},
+        {k:'unit',name:'单产',num:true,heat:true,bad:false,fmt:function(v){return '¥'+fmt(v,0);},dir:'深=优'},
+        {k:'rate',name:'全款转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);},dir:'深=更优'},
+        {k:'isTop',name:'是否TOP',html:function(r){return '<span class="hr-tag '+(String(r.isTop)==='是'?'t-ok':'t-gray')+'">'+esc(r.isTop)+'</span>';}},
+        {k:'status',name:'状态'}
+      ];
+      hrTable('hrTopTable', cols, rows);
+      const tsub=$('#hrTopTableSub');
+      if(tsub) tsub.textContent=cfg.n+' · 共 '+rows.length+' 人 · 按单产降序 · 转率/单产按本口径内 min~max 归一化';
+      const u=rows.map(function(r){return hrN(r.unit);}).filter(function(x){return x>0;});
+      const rt=rows.map(function(r){return hrN(r.rate);}).filter(function(x){return x>0;});
+      const uAvg=u.length?u.reduce(function(a,b){return a+b;},0)/u.length:0;
+      const rAvg=rt.length?rt.reduce(function(a,b){return a+b;},0)/rt.length:0;
+      const nTop=rows.filter(function(r){return String(r.isTop)==='是';}).length;
+      const promoted=rows.filter(function(r){return /晋升|转正/.test(String(r.status||''));}).length;
+      const leaving=rows.filter(function(r){return /离职/.test(String(r.status||''));}).length;
+      /* 状态构成环图 + 胶囊 + 留存摘要 */
+      const stMap={};
+      rows.forEach(function(r){ const k=String(r.status||'').trim()||'未标注'; stMap[k]=(stMap[k]||0)+1; });
+      const SC=['#22c55e','#3b82f6','#f59e0b','#ef4444','#a855f7','#0ea5e9','#ec4899'];
+      const stItems=Object.keys(stMap).map(function(k,i){return {name:k,value:stMap[k],color:SC[i%SC.length]};})
+        .sort(function(a,b){return b.value-a.value;});
+      const sEl=$('#hrTopStatus'); if(sEl) donutChart(sEl, stItems, cfg.n, rows.length+' 人');
+      const chEl=$('#hrTopChips');
+      if(chEl) chEl.innerHTML=stItems.map(function(it){return hrChip(it.color,it.name,fmt(it.value,0)+' 人');}).join('');
+      hrBrief('hrBriefTop2','b-green','<div class="hb-t">'+esc(cfg.n)+' · 留存摘要</div>'
+        +'<div class="hb-x">TOP 榜 <b>'+rows.length+'</b> 人：平均单产 <b>¥'+fmt(uAvg,0)+'</b>，平均全款转率 <b>'+fmtPct(rAvg,1)+'</b>；'
+        +'判定为 TOP 的 <b>'+nTop+'</b> 人，已晋升/转正 <b class="up">'+promoted+'</b> 人（干部梯队主要来源）'
+        +(leaving?'，<b class="dn">'+leaving+' 人预离职</b>，需优先做 1v1 沟通与激励对齐':'，暂无预离职风险信号')+'。</div>'
+        +'<div class="hr-chips">'+hrChip('#22c55e','判定 TOP',nTop+' 人')+hrChip('#3b82f6','平均单产','¥'+fmt(uAvg,0))
+        +hrChip('#a855f7','平均转率',fmtPct(rAvg,1))+hrChip(leaving?'#ef4444':HRC.dim,'预离职',leaving+' 人')+'</div>');
+      const s=$('#hrTopSum'); if(s) s.innerHTML=cfg.n+' · <b>'+rows.length+'</b> 人 · 平均单产 ¥'+fmt(uAvg,0)+' · 平均转率 '+fmtPct(rAvg,1);
+      hrNote('hrNoteTop','<b>'+esc(cfg.n)+'判读：</b>TOP 榜共 <b>'+rows.length+'</b> 人，其中判定为 TOP 的 <b>'+nTop+'</b> 人；'
+        +'单产区间 ¥'+fmt(Math.min.apply(null,u.length?u:[0]),0)+' ~ ¥'+fmt(Math.max.apply(null,u.length?u:[0]),0)+'，均值 ¥'+fmt(uAvg,0)+'；'
+        +'全款转率均值 '+fmtPct(rAvg,1)+'。存量结构上 <b>'+promoted+'</b> 人已晋升/转正（干部梯队的主要来源），'
+        +(leaving?'<b>'+leaving+'</b> 人处于预离职状态，是留存风险点，建议优先做 1v1 沟通与激励对齐。':'暂无预离职风险信号。')
+        +'注：电商品与大课单产口径不同（约 ¥3k 档 vs ¥8k 档），不可直接跨口径比较。');
+    }
+    const seg=document.getElementById('hrTopSeg');
+    let cur='ecom';
+    if(seg){
+      if(!seg.dataset.bound){ seg.dataset.bound='1';
+        seg.addEventListener('click', function(e){
+          const b=(e.target&&e.target.closest)?e.target.closest('button[data-top]'):null; if(!b) return;
+          Array.prototype.forEach.call(seg.querySelectorAll('button'), function(x){ x.classList.toggle('on', x===b); });
+          drawTop(b.getAttribute('data-top'));
+        });
+      }
+      const on=seg.querySelector('button.on'); if(on) cur=on.getAttribute('data-top')||'ecom';
+    }
+    if(!pick(cur).length) cur=top.length&&top[0].ck?top[0].ck:'ecom';
+    drawTop(cur);
+  });
+
+  /* 3 PIP情况 */
+  hrSafe('PIP', function(){
+    hrTable('hrPipHiT', [
+      {k:'camp',name:'营期',w:'60px'},{k:'coach',name:'教练名字',html:function(r){return '<b>'+esc(r.coach)+'</b>';}},
+      {k:'openDate',name:'开营时间',html:function(r){return esc(r.openDate||'—');}},
+      {k:'w1',name:'W1 ≥90%',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);},dir:'深=优'},
+      {k:'w1pip',name:'W1 PIP',html:function(r){return pipTag(r.w1pip);}},
+      {k:'w2',name:'W2 ≥90%',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+      {k:'w2pip',name:'W2 PIP',html:function(r){return pipTag(r.w2pip);}},
+      {k:'w3',name:'W3 ≥90%',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+      {k:'w3pip',name:'W3 解除',html:function(r){return pipTag(r.w3pip);}},
+      {k:'w7',name:'W7 ≥85%',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+      {k:'w7pip',name:'W7 解除',html:function(r){return pipTag(r.w7pip);}}
+    ], hi);
+    hrTable('hrPipRefundT', [
+      {k:'camp',name:'营期',w:'60px'},{k:'coach',name:'教练名字',html:function(r){return '<b>'+esc(r.coach)+'</b>';}},
+      {k:'openDate',name:'开营时间',html:function(r){return esc(r.openDate||'—');}},
+      {k:'rate',name:'退费率 ≤10%',heat:true,bad:true,fmt:function(v){return fmtPct(v,1);},dir:'深=需关注'},
+      {k:'out',name:'是否淘汰',html:function(r){return '<span class="hr-tag '+(String(r.out)==='是'?'t-warn':'t-ok')+'">'+esc(r.out)+'</span>';}}
+    ], refund);
+    hrTable('hrPipEcomT', [
+      {k:'camp',name:'营期',w:'56px'},{k:'product',name:'复购产品'},{k:'coach',name:'教练名字',html:function(r){return '<b>'+esc(r.coach)+'</b>';}},
+      {k:'d1',name:'D1转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);},dir:'深=优'},
+      {k:'d1diff',name:'D1差大盘',html:function(r){return diffCell(r.d1diff);}},
+      {k:'pip',name:'是否PIP',html:function(r){return pipTag(r.pip);}},
+      {k:'d5',name:'截至D5转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+      {k:'d5diff',name:'D5差大盘',html:function(r){ const v=(r.d5diff!=null&&r.d5diff!=='')?r.d5diff:(hrN(r.d5)-hrN(r.d5m)); return diffCell(v); }},
+      {k:'unpip',name:'是否解除',html:function(r){return pipTag(r.unpip);}}
+    ], ecom);
+    hrTable('hrPipBigT', [
+      {k:'camp',name:'营期',w:'56px'},{k:'product',name:'复购产品'},{k:'coach',name:'班级名称',html:function(r){return '<b>'+esc(r.coach)+'</b>';}},
+      {k:'d1',name:'D1转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);},dir:'深=优'},
+      {k:'d1diff',name:'D1差大盘',html:function(r){return diffCell(r.d1diff);}},
+      {k:'pip',name:'是否PIP',html:function(r){return pipTag(r.pip);}},
+      {k:'d5',name:'截至D5转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+      {k:'d5diff',name:'D5差大盘',html:function(r){return diffCell(r.d5diff);}},
+      {k:'d8',name:'截至D8转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+      {k:'d8diff',name:'D8差大盘',html:function(r){return diffCell(r.d8diff);}},
+      {k:'unpip',name:'是否解除',html:function(r){return pipTag(r.unpip);}}
+    ], big);
+    const nHi=hi.filter(function(r){return String(r.w1pip)==='是';}).length;
+    const nRef=refund.filter(function(r){return String(r.out)==='是';}).length;
+    const nEc=ecom.filter(function(r){return String(r.pip)==='是';}).length;
+    const nBg=big.filter(function(r){return String(r.pip)==='是';}).length;
+    const pb=$('#hrPipBar');
+    if(pb) hbarChart(pb,[
+      {name:'高互动需签PIP',value:nHi,color:'#3b82f6'},
+      {name:'退费淘汰',value:nRef,color:'#ef4444'},
+      {name:'电商复购PIP',value:nEc,color:'#f59e0b'},
+      {name:'大课复购PIP',value:nBg,color:'#a855f7'}
+    ],{});
+    const wPip=[['w1','w1pip'],['w2','w2pip'],['w3','w3pip'],['w7','w7pip']];
+    const wAvg=function(k){ const a=hi.map(function(r){return hrN(r[k]);}).filter(function(x){return x>0;}); return a.length?a.reduce(function(x,y){return x+y;},0)/a.length:0; };
+    const pt=$('#hrPipTrend');
+    if(pt && hi.length) comboChart(pt,{cats:wPip.map(function(w){return w[0].toUpperCase();}),h:280,labels:true,pctBar:true,
+      bar:{name:'平均互动率',values:wPip.map(function(w){return wAvg(w[0]);}),color:'#0ea5e9'},
+      line:{name:'当周需签PIP',values:wPip.map(function(w){return hi.filter(function(r){return String(r[w[1]])==='是';}).length;}),color:'#ef4444'}});
+    const sum=$('#hrPipSum'); if(sum) sum.innerHTML='高互动需签PIP <b>'+nHi+'</b> 人 · 退费淘汰 <b>'+nRef+'</b> 人 · 电商复购PIP <b>'+nEc+'</b> 人 · 大课复购PIP <b>'+nBg+'</b> 人 · 合计需关注 <b>'+(nHi+nRef+nEc+nBg)+'</b> 人次';
+    const a1=wAvg('w1'), a3=wAvg('w3'), a7=wAvg('w7');
+    /* 取最后一个有数据的周做对比（W7 常为未来周，无数据时不误判为下滑） */
+    const lastW=a7>0?['W7',a7]:(a3>0?['W3',a3]:['W1',a1]);
+    hrNote('hrNotePip','<b>PIP 判读：</b>四个口径合计需关注 <b>'+(nHi+nRef+nEc+nBg)+'</b> 人次，其中高互动率未达标 <b>'+nHi+'</b> 人（占参训教练 '+fmtPct(hi.length?nHi/hi.length:0,1)+'，是当前管理重点）'
+      +(nRef?'，退费率超阈值已判定淘汰 <b class="dn">'+nRef+'</b> 人':'，退费口径暂无淘汰')
+      +'，复购口径需签 PIP 电商 <b>'+nEc+'</b> 人 / 大课 <b>'+nBg+'</b> 人。'
+      +'高互动率均值由 W1 <b>'+fmtPct(a1,1)+'</b> 变化到 '+esc(lastW[0])+' <b>'+fmtPct(lastW[1],1)+'</b>（'+(lastW[1]>=a1?'<span class="up">改善</span>':'<span class="dn">下滑</span>')
+      +(a7<=0&&a3>0?'，W7 尚未开课、暂无数据':'')+'）；'
+      +'若 W3 仍未解除 PIP，建议直接启动 1v1 辅导或调整带组规模，避免拖到 W7 才淘汰。');
+    const seg=document.getElementById('hrPipSeg');
+    if(seg && !seg.dataset.bound){ seg.dataset.bound='1';
+      seg.addEventListener('click', function(e){
+        const b=(e.target && e.target.closest) ? e.target.closest('button[data-pip]') : null;
+        if(!b) return;
+        const key=b.getAttribute('data-pip');
+        Array.prototype.forEach.call(seg.querySelectorAll('button'), function(x){ x.classList.toggle('on', x===b); });
+        Array.prototype.forEach.call(document.querySelectorAll('.hr-pip-pane'), function(pn){
+          pn.style.display = (pn.getAttribute('data-pip')===key) ? 'block' : 'none';
+        });
+      });
+    }
+  });
+
+  /* 4 干部排名现状（电商品 / 大课 分口径） */
+  hrSafe('干部排名', function(){
+    const LK={ecom:{n:'电商品'}, big:{n:'大课'}};
+    function drawLd(ck){
+      const rows=leaders.filter(function(r){ return r.ck===ck; })
+        .slice().sort(function(a,b){ const c=String(a.camp||'').localeCompare(String(b.camp||''),'zh');
+          if(c) return c; const d=hrN(a.rank)-hrN(b.rank); return d?d:(hrN(b.unit)-hrN(a.unit)); });
+      const cols=[
+        {k:'camp',name:'营期',w:'56px'},
+        {k:'manager',name:'主管'},
+        {k:'leader',name:'组长姓名',html:function(r){return '<b>'+esc(r.leader)+'</b>';}},
+        {k:'rank',name:'排名',w:'54px',html:function(r){return hrN(r.rank)===1?'<span class="hr-tag t-ok">①</span>':String(r.rank);}},
+        {k:'unit',name:'单产',heat:true,bad:false,fmt:function(v){return '¥'+fmt(v,0);},dir:'深=优'},
+        {k:'rate',name:'转率',heat:true,bad:false,fmt:function(v){return fmtPct(v,1);}},
+        {k:'status',name:'现状',html:function(r){return '<span class="hr-tag t-blue">'+esc(r.status)+'</span>';}}
+      ];
+      hrTable('hrLeaderTable', cols, rows);
+      const tsub=$('#hrLdTableSub');
+      if(tsub) tsub.textContent=(LK[ck]?LK[ck].n:ck)+' · 共 '+rows.length+' 人 · 单产/转率按本口径内归一化';
+      const best=rows.slice().sort(function(a,b){return hrN(b.unit)-hrN(a.unit);})[0];
+      const s=$('#hrLdSum'); if(s) s.innerHTML=(LK[ck]?LK[ck].n:'')+' · <b>'+rows.length+'</b> 名组长入榜'
+        +(best?' · 单产最高 '+esc(best.leader||'')+'（'+esc(best.camp||'')+' ¥'+fmt(hrN(best.unit),0)+' / 转率 '+fmtPct(hrN(best.rate),1)+'）':'');
+      /* 单产对比条形 + 干部判读 */
+      const us=rows.map(function(r){return hrN(r.unit);}).filter(function(x){return x>0;});
+      const uAvg=us.length?us.reduce(function(a,b){return a+b;},0)/us.length:0;
+      const lc=$('#hrLdChart');
+      if(lc && rows.length) hbarChart(lc, rows.slice(0,10).map(function(r){ const v=hrN(r.unit);
+          return {name:String(r.leader||''),value:v,color:v>=uAvg?'#22c55e':'#f97316'}; }),
+        {refLine:uAvg, refLabel:'口径均值 ¥'+fmt(uAvg,0), fmt:function(v){return '¥'+fmt(v,0);}});
+      const above=rows.filter(function(r){return hrN(r.unit)>=uAvg && hrN(r.unit)>0;});
+      const below=rows.filter(function(r){return hrN(r.unit)>0 && hrN(r.unit)<uAvg;}).sort(function(a,b){return hrN(a.unit)-hrN(b.unit);});
+      const uMin=us.length?Math.min.apply(null,us):0, uMax=us.length?Math.max.apply(null,us):0;
+      hrNote('hrNoteLd','<b>'+esc(LK[ck]?LK[ck].n:ck)+'干部判读：</b><b>'+rows.length+'</b> 名组长入榜，单产均值 <b>¥'+fmt(uAvg,0)+'</b>'
+        +'（区间 ¥'+fmt(uMin,0)+' ~ ¥'+fmt(uMax,0)+'，最高/最低相差 <b>'+(uMin?fmt(uMax/uMin,1):'—')+' 倍</b>）；'
+        +'<b class="up">'+above.length+'</b> 人高于均值、<b class="dn">'+below.length+'</b> 人低于均值。'
+        +(best?'单产冠军 <b>'+esc(best.leader||'')+'</b>（'+esc(best.camp||'')+'，¥'+fmt(hrN(best.unit),0)+' / 转率 '+fmtPct(hrN(best.rate),1)+'），其带组方法建议沉淀为标杆案例；':'')
+        +(below.length?'低于均值的 <b>'+esc(below.slice(0,3).map(function(r){return String(r.leader||'');}).join('、'))+'</b> 需重点带教或调整带组规模。':'整体分布均衡，无显著掉队。'));
+    }
+    const seg=document.getElementById('hrLdSeg');
+    let cur='ecom';
+    if(seg){
+      if(!seg.dataset.bound){ seg.dataset.bound='1';
+        seg.addEventListener('click', function(e){
+          const b=(e.target&&e.target.closest)?e.target.closest('button[data-ld]'):null; if(!b) return;
+          Array.prototype.forEach.call(seg.querySelectorAll('button'), function(x){ x.classList.toggle('on', x===b); });
+          drawLd(b.getAttribute('data-ld'));
+        });
+      }
+      const on=seg.querySelector('button.on'); if(on) cur=on.getAttribute('data-ld')||'ecom';
+    }
+    if(!leaders.filter(function(r){return r.ck===cur;}).length) cur=leaders.length&&leaders[0].ck?leaders[0].ck:'ecom';
+    drawLd(cur);
+  });
+
+  /* 5 招聘数据 */
+  hrSafe('招聘', function(){
+    const det=recruit.filter(function(r){ return !isTotal(r) && /朗诵L4/.test(String(r.dept)); });
+    const posts=hrDistinct(det,function(r){return r.post;});
+    comboChart($('#hrRecChart'),{cats:posts,h:300,labels:true,
+      bar:{name:'校准后需求',values:posts.map(function(p){return hrSum(det.filter(function(r){return r.post===p;}),function(r){return hrN(r.needAdj);});}),color:'#3b82f6'},
+      line:{name:'入职',values:posts.map(function(p){return hrSum(det.filter(function(r){return r.post===p;}),function(r){return hrN(r.entry);});}),color:'#22c55e'}});
+    const cols=[
+      {k:'owner',name:'负责人',w:'60px'},
+      {k:'dept',name:'部门'},
+      {k:'post',name:'岗位',w:'60px'},
+      {k:'month',name:'月份',w:'56px'},
+      {k:'needStart',name:'月初需求',num:true},
+      {k:'needAdj',name:'校准后需求',num:true,heat:true,bad:false},
+      {k:'resume',name:'新增简历',num:true},
+      {k:'interview',name:'新增面试',num:true},
+      {k:'pass',name:'新增通过',num:true},
+      {k:'offer',name:'新增Offer',num:true},
+      {k:'entry',name:'入职',num:true,heat:true,bad:false},
+      {k:'complete',name:'月度完成度',heat:true,bad:false,fmt:function(v){return fmtPct(v,0);}},
+      {k:'gap',name:'招聘缺口',html:function(r){return hrGap(r.gap);}}
+    ];
+    recruit.forEach(function(r){ if(isTotal(r)) r.__cls='hr-total'; });
+    hrTable('hrRecTable', cols, recruit);
+    const rDet=recruit.filter(function(r){ return !isTotal(r); });
+    const nEntry=hrSum(rDet,function(r){return hrN(r.entry);});
+    const nNeed=hrSum(rDet,function(r){return hrN(r.needAdj);});
+    const nGap=hrSum(rDet,function(r){return hrN(r.gap);});
+    const nResume=hrSum(rDet,function(r){return hrN(r.resume);});
+    const nOffer=hrSum(rDet,function(r){return hrN(r.offer);});
+    const worst=rDet.slice().sort(function(a,b){return hrN(b.gap)-hrN(a.gap);})[0];
+    hrNote('hrNoteRec','<b>招聘判读（明细口径，已剔除小计/总计行）：</b>校准后需求 <b>'+fmt(nNeed,0)+'</b> 人，'
+      +'累计入职 <b>'+fmt(nEntry,0)+'</b> 人'+(nEntry>=nNeed?'，总量已达成':'，总量尚差 '+fmt(nNeed-nEntry,0)+' 人')+'；'
+      +'全链路新增简历 '+fmt(nResume,0)+' 份 → 面试 '+fmt(hrSum(rDet,function(r){return hrN(r.interview);}),0)+' 场 → 通过 '+fmt(hrSum(rDet,function(r){return hrN(r.pass);}),0)+' 人 → Offer '+fmt(nOffer,0)+' 个 → 入职 '+fmt(nEntry,0)+' 人，'
+      +'简历→入职转化率约 '+fmtPct(nResume?nEntry/nResume:0,1)+'。'
+      +(nGap>0?'缺口 <b>'+fmt(nGap,0)+'</b> 人属结构性错配（总量持平但岗位不齐）'
+        +(worst&&hrN(worst.gap)>0?'，集中在 <b>'+esc(String(worst.dept||''))+' / '+esc(String(worst.post||''))+'（'+esc(String(worst.month||''))+'）</b>，需优先补招。':'。')
+        :'当前各岗位已按校准需求配齐。'));
+    /* 全链路漏斗 + 各岗位完成度 */
+    const fn=$('#hrRecFunnel');
+    if(fn) funnelChart(fn,[
+      {name:'新增简历',value:nResume,color:'#0ea5e9'},
+      {name:'新增面试',value:hrSum(rDet,function(r){return hrN(r.interview);}),color:'#3b82f6'},
+      {name:'新增通过',value:hrSum(rDet,function(r){return hrN(r.pass);}),color:'#6366f1'},
+      {name:'新增Offer',value:nOffer,color:'#8b5cf6'},
+      {name:'入职',value:nEntry,color:'#22c55e'}
+    ]);
+    const rb=$('#hrRecBar');
+    if(rb) hbarChart(rb, posts.map(function(p){
+      const d=det.filter(function(r){return r.post===p;});
+      const nd=hrSum(d,function(r){return hrN(r.needAdj);});
+      const en=hrSum(d,function(r){return hrN(r.entry);});
+      return {name:p,value:nd?en/nd:0,color:(nd&&en>=nd)?'#22c55e':(nd?'#f59e0b':HRC.dim)};
+    }),{pct:true, refLine:1, refLabel:'100% 达成'});
+  });
+
+  /* 6 组织架构 */
+  hrSafe('组织架构', function(){
+    const ORG=D.org||{};
+    const kts=hrArr(ORG.kts), rows=hrArr(ORG.rows), st=ORG.stat||{};
+    const KT_COLOR=['#3b82f6','#f59e0b','#a855f7','#22c55e','#0ea5e9'];
+    const MG_COLOR=['#3b82f6','#f59e0b','#a855f7','#22c55e','#0ea5e9','#ec4899'];
+    const team=ORG.team||{};
+
+    /* 6.1 层级架构树 */
+    const wrap=$('#hrOrgTree');
+    if(wrap){
+      let h='<div class="org-chain">'
+        +'<div class="org-box lv1"><div class="ob-h">'+esc(ORG.l1||'—')+'</div><div class="ob-s">一级架构</div></div>'
+        +'<span class="org-arw">›</span>'
+        +'<div class="org-box lv2"><div class="ob-h">'+esc(ORG.l2||'—')+'</div><div class="ob-s">二级部门</div></div>'
+        +'<span class="org-arw">›</span>'
+        +'<div class="org-box lv3"><div class="ob-h">'+esc(team.name||'—')+'</div>'
+        +'<div class="ob-s">负责人 <b>'+esc(team.owner||'—')+'</b> · 在册 <b>'+fmt(team.size,0)+'</b> 人</div></div>'
+        +'</div><div class="org-stem"></div><div class="org-kts">';
+      const seenMgr={};
+      kts.forEach(function(k,i){
+        const c=KT_COLOR[i%KT_COLOR.length];
+        h+='<div class="org-kt" style="--c:'+c+'">'
+          +'<div class="org-kt-h"><span class="okt-n">'+esc(k.name||'—')+'</span>'
+          +'<span class="okt-s"><b>'+fmt(k.size,0)+'</b> 人</span></div>'
+          +'<div class="org-bar"><i style="width:'+Math.max(2,Math.round(hrN(k.pct)*100))+'%;background:'+c+'"></i></div>'
+          +'<div class="org-kt-s">占一团 '+fmtPct(k.pct,1)+' · 主管 '+fmt(k.mgrCnt,0)+' 位 · 小组 '+fmt(k.grpCnt,0)+' 个 · 管幅 '+fmt(k.span,0)+' 人</div>';
+        hrArr(k.mgrs).forEach(function(m){
+          const gs=hrArr(m.groups);
+          const cross=(m.mgr&&seenMgr[m.mgr])?1:0;
+          if(m.mgr) seenMgr[m.mgr]=1;
+          h+='<div class="org-mgr">'
+            +'<div class="org-mgr-h">'
+            +'<span class="om-n">'+esc(m.arc||'—')+'</span>'
+            +(m.mgr?'<span class="om-p">'+esc(m.mgr)+'</span>':'<span class="om-p none">暂缺主管</span>')
+            +(m.level?'<span class="hr-tag t-indigo">'+esc(m.level)+'</span>':'')
+            +(cross?'<span class="hr-tag t-cyan">跨课题兼管</span>':'')
+            +'<span class="om-r">上任 '+(m.since?esc(String(m.since)).slice(0,10):'—')+' · 自报管幅 <b>'+fmt(m.span,0)+'</b></span>'
+            +'</div><div class="org-groups">';
+          gs.forEach(function(g){
+            const pls=hrArr(g.planners);
+            h+='<div class="org-g">'
+              +'<div class="og-h"><span class="og-n">'+esc(g.name||'—')+'</span>'
+              +(g.lead?'<span class="og-l">'+esc(g.lead)+'</span>':'<span class="og-l none">暂未带组</span>')+'</div>'
+              +'<div class="og-m">管幅 <b>'+fmt(g.span,0)+'</b> 人 · 新人 '+fmtPct(g.newPct,0)+'</div>'
+              +(g.camp?'<div class="og-m dim">'+esc(g.camp)+'</div>':'')
+              +(g.out?'<div class="og-m"><span class="hr-tag t-amber">外聘/待接 '+esc(g.out)+'</span></div>':'')
+              +(pls.length?'<div class="og-pls">'+pls.map(function(p){
+                  const tg=String(p.t||'');
+                  const cls=tg.indexOf('新人')>=0?'pn':(tg.indexOf('转入')>=0?'pt':'');
+                  return '<span class="pl '+cls+'">'+esc(p.n)+(tg?'<i>'+esc(tg)+'</i>':'')+'</span>';
+                }).join('')+'</div>':'')
+              +'</div>';
+          });
+          h+='</div></div>';
+        });
+        h+='</div>';
+      });
+      h+='</div>';
+      wrap.innerHTML=h;
+    }
+
+    /* 6.2 规模胶囊 */
+    const ch=$('#hrOrgChips');
+    if(ch) ch.innerHTML=hrChip('#14b8a6','在册人数',fmt(st.total,0)+' 人')
+      +hrChip('#3b82f6','四级课题',fmt(st.kt,0)+' 个')
+      +hrChip('#a855f7','五级主管',fmt(st.mgr,0)+' 位')
+      +hrChip('#22c55e','六级组长',fmt(st.lead,0)+' 位')
+      +hrChip('#f59e0b','教学小组',fmt(st.group,0)+' 个')
+      +hrChip('#0ea5e9','目前管幅',fmt(st.span,0)+' 人')
+      +hrChip('#ef4444','新人占比',fmtPct(st.newPct,0)+'（'+fmt(st.newCnt,0)+' 人）')
+      +hrChip(HRC.dim,'外聘/待接',fmt(st.out,0)+' 组');
+
+    /* 6.3 课题人数分布 + 主管管幅 */
+    const pie=$('#hrOrgPie');
+    if(pie) donutChart(pie, kts.map(function(k,i){
+      return {name:k.name||'—', value:hrN(k.size), color:KT_COLOR[i%KT_COLOR.length]};
+    }), '一团在册', fmt(st.total,0)+' 人');
+    const mm={};
+    kts.forEach(function(k){
+      hrArr(k.mgrs).forEach(function(m){
+        if(!m.mgr) return;
+        if(!mm[m.mgr]) mm[m.mgr]={arc:m.arc, mgr:m.mgr, value:0, span:hrN(m.span)};
+        mm[m.mgr].value+=hrArr(m.groups).reduce(function(a,g){return a+hrN(g.span);},0);
+      });
+    });
+    const mgrs=Object.keys(mm).map(function(k){return mm[k];});
+    const mb=$('#hrOrgMgr');
+    if(mb && mgrs.length){
+      const avg=st.total/(mgrs.length||1);
+      hbarChart(mb, mgrs.map(function(m,i){
+        return {name:m.arc+' · '+m.mgr, value:m.value, color:MG_COLOR[i%MG_COLOR.length]};
+      }), {fmt:function(v){return fmt(v,0)+' 人';}, refLine:avg, refLabel:'人均参考 '+fmt(avg,1)+' 人'});
+    }
+
+    /* 6.4 明细表 */
+    hrTable('hrOrgTable', [
+      {k:'kt',name:'四级课题',w:'112px'},
+      {k:'arc',name:'五级架构',w:'112px'},
+      {k:'mgr',name:'主管',w:'58px',html:function(r){return r.mgr?'<b>'+esc(r.mgr)+'</b>':'<span class="em">—</span>';}},
+      {k:'name',name:'六级小组',w:'96px',al:'l',html:function(r){return '<b>'+esc(r.name)+'</b>';}},
+      {k:'lead',name:'组长',w:'58px',html:function(r){return r.lead?esc(r.lead):'<span class="hr-tag t-rose">暂缺</span>';}},
+      {k:'leadLevel',name:'组长职级',w:'80px',html:function(r){return r.leadLevel?esc(r.leadLevel):'<span class="em">—</span>';}},
+      {k:'camp',name:'目前营期',w:'132px',al:'l',html:function(r){return r.camp?esc(r.camp):'<span class="em">—</span>';}},
+      {k:'span',name:'目前管幅',num:true,heat:true,bad:false},
+      {k:'newPct',name:'新人占比',num:true,heat:true,bad:true,fmt:function(v){return fmtPct(v,0);}},
+      {k:'out',name:'外聘/待接',w:'80px',html:function(r){return r.out?'<span class="hr-tag t-amber">'+esc(r.out)+'</span>':'<span class="em">—</span>';}},
+      {k:'plannerCnt',name:'规划师',num:true},
+      {k:'planners',name:'组员名单',al:'l',html:function(r){
+        const a=hrArr(r.planners); return a.length?esc(a.join('、')):'<span class="em">—</span>';}}
+    ], rows);
+    const osub=$('#hrOrgTableSub');
+    if(osub) osub.innerHTML='全量 <b>'+rows.length+'</b> 个组-营期单元 · '+fmt(st.group,0)+' 个教学小组 · '+fmt(st.planner,0)+' 名课程规划师';
+
+    /* 6.5 判读 */
+    const bigKt=kts.slice().sort(function(a,b){return hrN(b.size)-hrN(a.size);})[0];
+    const noMgrKt=kts.filter(function(k){ return !hrArr(k.mgrs).some(function(m){return m.mgr;}); });
+    const noLead=rows.filter(function(r){ return !r.lead; });
+    const hiNew=rows.slice().sort(function(a,b){return hrN(b.newPct)-hrN(a.newPct);})[0];
+    const bigGrp=rows.slice().sort(function(a,b){return hrN(b.span)-hrN(a.span);})[0];
+    hrNote('hrNoteOrg','<b>组织架构判读：</b>'+esc(ORG.l1||'')+' › '+esc(ORG.l2||'')+' › <b>'+esc(team.name||'')+'</b>（'+esc(team.owner||'')+'），在册 <b>'+fmt(st.total,0)+'</b> 人，'
+      +'下辖 <b>'+fmt(st.kt,0)+'</b> 个四级课题：'
+      +(bigKt?'其中 <b>'+esc(bigKt.name)+'</b> '+fmt(bigKt.size,0)+' 人（占 '+fmtPct(bigKt.pct,1)+'）为主力盘；':'')
+      +'五级主管 <b>'+fmt(st.mgr,0)+'</b> 位、六级组长 <b>'+fmt(st.lead,0)+'</b> 位、教学小组 <b>'+fmt(st.group,0)+'</b> 个，目前实际管幅合计 <b>'+fmt(st.span,0)+'</b> 人（与课程规划师在册 '+fmt(st.planner,0)+' 人一致）。'
+      +'<br><b>风险与建议：</b>'
+      +(noMgrKt.length?'① '+noMgrKt.map(function(k){return '<b>'+esc(k.name)+'</b>';}).join('、')+' 尚未配置主管，需尽快补位；':'① 各课题均已配置主管；')
+      +(noLead.length?'② '+noLead.map(function(r){return '<b>'+esc(r.name)+'</b>';}).join('、')+' 暂未带组/无组长'
+        +(bigGrp?'（其中 '+esc(bigGrp.name)+' 管幅 '+fmt(bigGrp.span,0)+' 人为最大组）':'')+'，带教归属需明确；':'② 各小组均已配组长；')
+      +(hiNew&&hrN(hiNew.newPct)>=0.5?'③ '+esc(hiNew.name)+' 新人占比 <b>'+fmtPct(hiNew.newPct,0)+'</b>，全团新人 '+fmt(st.newCnt,0)+'/'+fmt(st.span,0)+'（'+fmtPct(st.newPct,0)+'），辅导资源要向新人倾斜；':'③ 新人结构整体可控；')
+      +(st.out?'④ <b>'+fmt(st.out,0)+'</b> 个组由外聘组长暂代，需评估转正或换手时点。':'④ 暂无外聘代管。'));
+  });
+
+  /* 交互：锚点导航 */
+  hrSafe('绑定', function(){
+    const an=$('#hrAnchorNav');
+    if(an && !an.dataset.bound){
+      an.dataset.bound='1';
+      an.onclick=function(e){
+        const b=e.target.closest('button[data-anchor]'); if(!b) return;
+        an.querySelectorAll('button').forEach(function(x){ x.classList.toggle('on',x===b); });
+        const el=document.getElementById(b.dataset.anchor);
+        if(el) el.scrollIntoView({behavior:'smooth',block:'start'});
+      };
+    }
+  });
+}
+const esc=s=>String(s==null?'':s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function fmt(n,d){ n=Number(n)||0; d=(d==null?0:d); return n.toLocaleString('zh-CN',{minimumFractionDigits:d,maximumFractionDigits:d}); }
+function fmtPct(v,d){ v=Number(v)||0; d=(d==null?1:d); return (v*100).toFixed(d)+'%'; }
+const LS_PREFIX='wb_yxzc_';
+function sampleData(){ return (typeof window.__EMBED_DATA__!=='undefined') ? window.__EMBED_DATA__ : {}; /* 固化业务数据（来自「朗诵-L4-大课&电商数据.xlsx」），全新访客首次打开即载入；已上传 localStorage 的用户不受影响 */ }
+let DATA=sampleData();
+const LS={ get(k,def){ try{ const v=localStorage.getItem(LS_PREFIX+k); return v==null?def:JSON.parse(v);}catch(e){ return def; } },
+  set(k,v){ try{ localStorage.setItem(LS_PREFIX+k,JSON.stringify(v));}catch(e){} }, del(k){ try{ localStorage.removeItem(LS_PREFIX+k);}catch(e){} } };
+let USER=LS.get('session',null);
+const state={ project:'', link:'', cat:'', months:[], batch:'', batches:[], user:USER, tblSort:{} };
+function allData(){ return Object.keys(DATA).reduce((a,k)=>a.concat(DATA[k]),[]); }
+function months(){ return distinct(allData(),r=>r['月份']).sort(); }
+function batches(){ return distinct(allData(),r=>r['营期数']).sort((a,b)=>(parseInt((a+'').replace(/\D/g,''))||0)-(parseInt((b+'').replace(/\D/g,''))||0)); }
+function sum(arr,f){ return arr.reduce((a,r)=>a+(Number(f(r))||0),0); }
+function distinct(arr,f){ const m={}; arr.forEach(r=>{const k=f(r); if(k!=null&&k!=='')m[k]=1;}); return Object.keys(m); }
+function svgEl(tag,attrs){ const el=document.createElementNS('http://www.w3.org/2000/svg',tag); for(const k in attrs) el.setAttribute(k,attrs[k]); return el; }
+function rectOverlap(a,b){ return a.x < b.x+b.w && a.x+a.w > b.x && a.y < b.y+b.h && a.y+a.h > b.y; }
+function chartVisible(container){
+  try{
+    if(!container) return false;
+    if(container.offsetParent===null && getComputedStyle(container).position!=='fixed') return false;
+    const r=container.getBoundingClientRect();
+    return r.width>0 && r.height>0;
+  }catch(e){ return true; }
+}
+function markChartAnim(container){
+  try{ if(container&&container.classList) container.classList.toggle('no-anim', !chartVisible(container)); }catch(e){}
+}
+function makeSvg(w,h){ return svgEl('svg',{viewBox:'0 0 '+w+' '+h,preserveAspectRatio:'xMidYMid meet'}); }
+function niceMax(v){ if(v<=0)return 1; const p=Math.pow(10,Math.floor(Math.log10(v))); const d=v/p; let m=d<=1?1:d<=2?2:d<=2.5?2.5:d<=5?5:10; return m*p; }
+function axisX(svg,x0,y0,w,labels,color){ const g=svgEl('g',{}); g.appendChild(svgEl('line',{x1:x0,y1:y0,x2:x0+w,y2:y0,stroke:HRC.grid})); const n=labels.length; labels.forEach((l,i)=>{ const x=x0+w*(n===1?0.5:i/(n-1)); const tx=svgEl('text',{x:x,y:y0+16,'text-anchor':'middle','font-size':12,fill:color||HRC.axis}); tx.textContent=l; g.appendChild(tx); }); svg.appendChild(g); }
+function axisY(svg,x0,y0,h,vals,labels,color){ const g=svgEl('g',{}); g.appendChild(svgEl('line',{x1:x0,y1:y0,x2:x0,y2:y0-h,stroke:HRC.grid})); const n=vals.length; vals.forEach((v,i)=>{ const y=y0-h*i/(n-1); g.appendChild(svgEl('line',{x1:x0,y1:y,x2:x0-4,y2:y,stroke:HRC.grid})); const tx=svgEl('text',{x:x0-6,y:y+3,'text-anchor':'end','font-size':12,fill:color||HRC.axis}); tx.textContent=labels[i]; g.appendChild(tx); }); svg.appendChild(g); }
+function niceTicks(max,n){ const step=niceMax(max)/(n||4); const r=[]; for(let i=0;i<=n;i++) r.push(step*i); return r; }
+function renderChartLegend(container,items){ if(!items||!items.length)return; const lg=document.createElement('div'); lg.className='legend'; lg.style.marginTop='8px'; lg.style.justifyContent='center'; lg.innerHTML=items.map(it=>'<span><i style="background:'+it.color+'"></i>'+esc(it.name)+'</span>').join(''); container.appendChild(lg); }
+function showTip(container,tip,html,e){ tip.innerHTML=html; tip.style.opacity='1'; const cr=container.getBoundingClientRect(); let x=e.clientX-cr.left+14, y=e.clientY-cr.top+14; const tw=tip.offsetWidth, th=tip.offsetHeight; if(x+tw>cr.width)x=cr.width-tw-8; if(y+th>cr.height)y=cr.height-th-8; if(y<4)y=4; if(x<4)x=4; tip.style.left=x+'px'; tip.style.top=y+'px'; }
+function attachLineTooltip(container,svg,series,cats,x,W,H,pad,pct,fmt,tipVal){
+  const tip=document.createElement('div'); tip.className='cv-tip'; container.appendChild(tip);
+  const guide=svgEl('line',{x1:0,y1:pad.t,x2:0,y2:H-pad.b,stroke:HRC.grid,'stroke-width':1,'stroke-dasharray':'3 3',opacity:0}); svg.appendChild(guide);
+  const overlay=svgEl('rect',{x:pad.l,y:pad.t,width:W-pad.l-pad.r,height:H-pad.t-pad.b,fill:'transparent','pointer-events':'none'}); svg.appendChild(overlay);
+  const n=series[0].data.length;
+  overlay.addEventListener('mousemove',function(e){ const rect=svg.getBoundingClientRect(); const px=(e.clientX-rect.left)*(W/(rect.width||W)); let i=Math.round((px-pad.l)/((W-pad.l-pad.r)||1)*(n-1)); i=Math.max(0,Math.min(n-1,i)); guide.setAttribute('x1',x(i)); guide.setAttribute('x2',x(i)); guide.setAttribute('opacity',1); let html='<div class="t-cat">'+cats[i]+'</div>'; series.forEach((s,si)=>{ const v=s.data[i]; const txt= v==null?'—':(tipVal?tipVal(v,si,i):(pct?fmtPct(v,1):(fmt?fmt(v):fmt(v,0)))); html+='<div class="t-row"><i style="background:'+s.color+'"></i><span>'+s.name+'：'+txt+'</span></div>'; }); showTip(container,tip,html,e); });
+  overlay.addEventListener('mouseleave',function(){ tip.style.opacity='0'; guide.setAttribute('opacity',0); });
+}
+function lineChart(container,series,opts){
+  opts=opts||{}; const H=opts.h||300,pad={l:58,r:18,t:18,b:30};
+  // 自适应界面：读取容器实际宽度，SVG 与容器 1:1 像素对齐（避免固定 680 坐标系整体缩放导致比例不一致）
+  const W0=container.clientWidth||container.offsetWidth||0;
+  if(!container.__roLine){
+    if(typeof ResizeObserver!=='undefined'){
+      container.__roLine=new ResizeObserver(()=>{ const w=container.clientWidth||0;
+        if(w>=200 && Math.abs(w-(container.__lastW||0))>2){ container.__lastW=w; draw(w); } });
+      container.__roLine.observe(container);
+    } else container.__roLine=true;
+  }
+  function draw(W){
+  if(!W||W<200) W=680;
+  if(W>4000) W=4000; // 兜底：aspect-ratio 与容器固定高度冲突时宽度会被反复推导放大
+  container.style.aspectRatio=W+'/'+H;
+  container.__lastW=container.clientWidth||W; // 记录真实宽度，避免 ResizeObserver 反复重绘
+  markChartAnim(container);
+  container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const tip=document.createElement('div'); tip.className='cv-tip'; container.appendChild(tip);
+  const cats=opts.cats||series[0].data.map((_,i)=>i+1); const n=cats.length; const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  // D1：无数据时输出占位
+  if(!n){ container.innerHTML=emptyState({sm:true,icon:'📈',title:'暂无数据',desc:'当前筛选下无可用于绘图的记录'}); return; }
+  let max=0; series.forEach(s=>s.data.forEach(v=>{ if(v!=null)max=Math.max(max,Number(v)||0); })); if(max<=0)max=1;
+  let yMax=opts.pct?(max>1?niceMax(max):1):max; // pct 时若真实值超100%则自动扩展上界，避免点位溢出图区
+  if(opts.refLine!=null && Number(opts.refLine)>yMax) yMax=Number(opts.refLine)*1.12; // 目标线高于数据时扩展上界
+  const vals=niceTicks(yMax,4); axisY(svg,pad.l,H-pad.b,ih,vals,vals.map(v=>opts.pct?fmtPct(v,0):(opts.fmt?opts.fmt(v):fmt(v,0)))); axisX(svg,pad.l,H-pad.b,iw,cats);
+  const x=i=> pad.l+iw*(n===1?0.5:i/(n-1)); const y=v=>{ const nv=Math.min(Math.max(Number(v)||0,0),yMax); return pad.t+ih*(1-nv/yMax); };
+  // E1：目标 / 参考线（水平虚线 + 右侧标签）
+  if(opts.refLine!=null){ const ry=y(Number(opts.refLine));
+    svg.appendChild(svgEl('line',{x1:pad.l,y1:ry,x2:pad.l+iw,y2:ry,stroke:opts.refColor||'#f97316','stroke-width':1.5,'stroke-dasharray':'6 4',opacity:.9}));
+    const rl=svgEl('text',{x:pad.l+iw-2,y:Math.max(pad.t+10,ry-5),'text-anchor':'end','font-size':10,'font-weight':700,fill:opts.refColor||'#f97316'});
+    rl.textContent=opts.refLabel||('目标 '+fmtPct(Number(opts.refLine),1)); svg.appendChild(rl); }
+  const gapOf=v=> v==null || (!opts.keepZero && v===0); // keepZero：0 值也连线，保证线条全部链接
+  const labelRects=[];
+  series.forEach((s,si)=>{
+    const segs=[]; let cur=[];
+    s.data.forEach((v,i)=>{ if(gapOf(v)){ if(cur.length){segs.push(cur);cur=[];} } else cur.push({i,v}); }); if(cur.length)segs.push(cur);
+    segs.forEach(seg=>{
+      const pts=seg.map(p=>({x:x(p.i), y:y(p.v)}));
+      let d= (opts.smooth && pts.length>2)? smoothPath(pts) : pts.map((p,k)=>(k?'L':'M')+p.x.toFixed(1)+' '+p.y.toFixed(1)).join(' ');
+      const path=svgEl('path',{d:d,fill:'none',stroke:s.color,'stroke-width':3,'stroke-linejoin':'round','stroke-linecap':'round','class':'cv-line'}); path.style.filter='drop-shadow(0 0 5px '+s.color+'66)';
+      let len=0; try{ len=path.getTotalLength()||0; }catch(e){} if(len){ path.style.setProperty('--len',len); path.style.strokeDasharray=len; }
+      svg.appendChild(path); });
+    s.data.forEach((v,i)=>{ if(gapOf(v))return; const c=svgEl('circle',{cx:x(i),cy:y(v),r:4.5,fill:s.color,stroke:HRC.bg,'stroke-width':1.4,'class':'cv-dot'}); c.style.animationDelay=(0.3+i*0.03)+'s'; svg.appendChild(c);
+      const tipTxt=opts.tipVal? opts.tipVal(v,si,i) : (opts.pct?fmtPct(v,1):(opts.fmt?opts.fmt(v):fmt(v,0)));
+      c.addEventListener('mousemove',e=>showTip(container,tip,cats[i]+' · '+s.name+'：'+tipTxt,e)); c.addEventListener('mouseleave',()=>tip.style.opacity='0');
+      if(opts.labels){
+        const txt=opts.lbl? opts.lbl(v,si,i) : (opts.pct?fmtPct(v,1):(opts.fmt?opts.fmt(v):fmt(v,0)));
+        const py=y(v); let ly=(i%2===0)?py-10:py+16; if(ly < pad.t+6) ly=py+16; else if(ly > H-pad.b-6) ly=py-10;
+        let lx=x(i), anchor='middle'; if(n>1){ if(i===0){ lx=x(0)+10; anchor='start'; } else if(i===n-1){ lx=x(n-1)-10; anchor='end'; } lx=Math.max(pad.l+4,Math.min(pad.l+iw-4,lx)); }
+        const approxW=txt.length*7+6, approxH=13;
+        let rx=lx-approxW/2, ry=ly-approxH; if(anchor==='start') rx=lx; else if(anchor==='end') rx=lx-approxW;
+        const rect={x:rx,y:ry,w:approxW,h:approxH};
+        let collides=labelRects.some(r=>rectOverlap(rect,r));
+        if(collides){
+          const altLy=(ly===py-10)?py+16:py-10;
+          if(altLy >= pad.t+6 && altLy <= H-pad.b-6){
+            const altRect={...rect,y:altLy-approxH};
+            if(!labelRects.some(r=>rectOverlap(altRect,r))){ ly=altLy; rect.y=altRect.y; }
+            else { return; }
+          } else { return; }
+        }
+        const lb=svgEl('text',{x:lx,y:ly,'text-anchor':anchor,'font-size':12,fill:s.color,'font-weight':700,'stroke':HRC.bg,'stroke-width':3.5,'paint-order':'stroke','stroke-linejoin':'round'}); lb.textContent=txt; svg.appendChild(lb); labelRects.push(rect);
+      } });
+  });
+  if(opts.legend!==false) renderChartLegend(container,series.map(s=>({name:s.name,color:s.color})));
+  if(n>1) attachLineTooltip(container,svg,series,cats,x,W,H,pad,opts.pct,opts.fmt,opts.tipVal);
+  }
+  draw(W0);
+}
+function smoothPath(pts){
+  let d='M'+pts[0].x.toFixed(1)+' '+pts[0].y.toFixed(1);
+  for(let i=0;i<pts.length-1;i++){
+    const p0=pts[Math.max(0,i-1)], p1=pts[i], p2=pts[i+1], p3=pts[Math.min(pts.length-1,i+2)];
+    const c1x=p1.x+(p2.x-p0.x)/6, c1y=p1.y+(p2.y-p0.y)/6;
+    const c2x=p2.x-(p3.x-p1.x)/6, c2y=p2.y-(p3.y-p1.y)/6;
+    d+='C'+c1x.toFixed(1)+' '+c1y.toFixed(1)+' '+c2x.toFixed(1)+' '+c2y.toFixed(1)+' '+p2.x.toFixed(1)+' '+p2.y.toFixed(1);
+  }
+  return d;
+}
+function barChart(container,groups,opts){
+  opts=opts||{}; const H=opts.h||260,pad={l:58,r:16,t:opts.padT||18,b:30};
+  // 自适应界面：读取容器实际宽度，SVG 与容器 1:1 像素对齐（与 comboChartMulti / lineChart 保持同一比例基准）
+  const W0=container.clientWidth||container.offsetWidth||0;
+  if(!container.__roBar){
+    if(typeof ResizeObserver!=='undefined'){
+      container.__roBar=new ResizeObserver(()=>{ const w=container.clientWidth||0;
+        if(w>=200 && Math.abs(w-(container.__lastW||0))>2){ container.__lastW=w; draw(w); } });
+      container.__roBar.observe(container);
+    } else container.__roBar=true;
+  }
+  function draw(W){
+  if(!W||W<200) W=680;
+  if(W>4000) W=4000; // 兜底：aspect-ratio 与容器固定高度冲突时宽度会被反复推导放大
+  container.style.aspectRatio=W+'/'+H;
+  container.__lastW=container.clientWidth||W; // 记录真实宽度，避免 ResizeObserver 反复重绘
+  markChartAnim(container);
+  container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const tip=document.createElement('div'); tip.className='cv-tip'; container.appendChild(tip);
+  const cats=groups.map(g=>g.label); const n=cats.length; const iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  // D1：无任何可绘制数据时输出占位，避免只画空坐标系（与"加载中"无法区分）
+  if(!n){ container.innerHTML=emptyState({sm:true,icon:'📊',title:'暂无数据',desc:'当前筛选下无可用于绘图的记录'}); return; }
+  let max=0; groups.forEach(g=>{ let s=0; g.series.forEach(se=>{ const v=Number(se.value)||0; if(opts.stack)s+=v; else max=Math.max(max,v); }); if(opts.stack)max=Math.max(max,s); }); if(max<=0)max=1;
+  const yMax=opts.pct?(max>1?niceMax(max):1):max; // pct 超100%自动扩展上界
+  const vals=niceTicks(yMax,4); axisY(svg,pad.l,H-pad.b,ih,vals,vals.map(v=>opts.pct?fmtPct(v,0):(opts.fmt?opts.fmt(v):fmt(v,0))));
+  // X 轴标签柱中心居中（v9 修复错位）
+  svg.appendChild(svgEl('line',{x1:pad.l,y1:H-pad.b,x2:W-pad.r,y2:H-pad.b,stroke:HRC.grid}));
+  cats.forEach((c,i)=>{ const tx=svgEl('text',{x:pad.l+iw*(n===1?0.5:(i+0.5)/n),y:H-pad.b+16,'text-anchor':'middle','font-size':12,fill:HRC.axis}); tx.textContent=c; svg.appendChild(tx); });
+  const y0=H-pad.b; const bw=iw*Math.min(0.7/n,0.24); // 柱宽上限：n<3 时不再无限加宽
+  const sNames=[],sCols=[];
+  groups.forEach((g,gi)=>{ const cx=pad.l+iw*(n===1?0.5:(gi+0.5)/n); let cum=0; g.series.forEach((se,si)=>{ const v=Number(se.value)||0; if(v<=0)return; const hgt=v/yMax*ih; let bx,by,bw2;
+    if(opts.stack){ bx=cx-bw/2; by=y0-hgt-cum/yMax*ih; bw2=bw; cum+=v; } else { bw2=bw/g.series.length; bx=cx-bw/2+si*bw2; by=y0-hgt; }
+    const rattr={x:bx,y:by,width:Math.max(bw2-2,1),height:Math.max(hgt,0.5),rx:(opts.rx!=null?opts.rx:3),fill:se.color,opacity:.94,'class':'cv-bar'};
+    if(opts.stroke){ rattr.stroke=opts.stroke; rattr['stroke-width']=1.2; }
+    const r=svgEl('rect',rattr); r.style.animationDelay=(gi*0.04+si*0.03)+'s';
+    const tipTxt=opts.tipVal? opts.tipVal(v,si,gi) : (opts.pct?fmtPct(v,1):(opts.fmt?opts.fmt(v):fmt(v,0)));
+    r.addEventListener('mousemove',e=>showTip(container,tip,cats[gi]+' · '+se.name+'：'+tipTxt,e));
+    r.addEventListener('mouseleave',()=>tip.style.opacity='0');
+    svg.appendChild(r); if(opts.labels && (!opts.stack || hgt>=16)){
+      const lx=opts.stack? cx : (cx-bw/2+si*bw2+bw2/2);
+      const inside = opts.stack || opts.labelInside;
+      const ly = inside ? (by+hgt/2+3.5) : (by-5);
+      const defaultTxt = opts.pct? fmtPct(v,1) : (opts.fmt? opts.fmt(v) : fmt(v,0));
+      const raw = opts.lbl ? opts.lbl(v,si,gi) : defaultTxt;
+      const lines = Array.isArray(raw)? raw : (raw==null? [] : [raw]);
+      lines.forEach((ln,li)=>{
+        const txt=(typeof ln==='object'&&ln.t!=null)? ln.t : ln;
+        const col=(typeof ln==='object'&&ln.c)? ln.c : (inside?HRC.bg:(opts.labelColor||HRC.sub));
+        const fz=(typeof ln==='object'&&ln.fs)? ln.fs : (inside?10.5:(lines.length>1?10:13));
+        const fw=(typeof ln==='object'&&ln.w)? ln.w : 700;
+        const lly=ly-li*(fz+4);
+        const lb=svgEl('text',{x:lx,y:lly,'text-anchor':'middle','font-size':fz,fill:col,'font-weight':fw});
+        if(inside) lb.style.textShadow='0 1px 2px rgba(0,0,0,.25)';
+        lb.textContent=txt; svg.appendChild(lb);
+      });
+    } if(!sNames.includes(se.name)){ sNames.push(se.name); sCols.push(se.color); } }); });
+  if(opts.legend!==false) renderChartLegend(container,sNames.map((nm,i)=>({name:nm,color:sCols[i]})));
+  }
+  draw(W0);
+}
+function comboChart(container,opt){
+  const H=opt.h||280,pad={l:82,r:80,t:18,b:30};
+  // 自适应界面：读取容器实际宽度，SVG 与容器 1:1 像素对齐（与 lineChart/barChart/comboChartMulti 保持同一比例基准）
+  const W0=container.clientWidth||container.offsetWidth||0;
+  if(!container.__roCombo){
+    if(typeof ResizeObserver!=='undefined'){
+      container.__roCombo=new ResizeObserver(()=>{ const w=container.clientWidth||0;
+        if(w>=200 && Math.abs(w-(container.__lastW||0))>2){ container.__lastW=w; draw(w); } });
+      container.__roCombo.observe(container);
+    } else container.__roCombo=true;
+  }
+  function draw(W){
+  if(!W||W<200) W=680;
+  if(W>4000) W=4000; // 兜底：aspect-ratio 与容器固定高度冲突时宽度会被反复推导放大
+  container.style.aspectRatio=W+'/'+H;
+  container.__lastW=container.clientWidth||W; // 记录真实宽度，避免 ResizeObserver 反复重绘
+  markChartAnim(container);
+  container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const tip=document.createElement('div'); tip.className='cv-tip'; container.appendChild(tip);
+  const cats=opt.cats, n=cats.length, iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  const yMax=Math.max(1,...opt.bar.values.map(v=>Number(v)||0)); const yMaxN=niceMax(yMax);
+  // pctLine 模式：line 也按 line.max 归一化到 0-1（与转率同坐标系）
+  const _lineRaw=opt.line.values;
+  const _lineMax=Math.max(1,..._lineRaw.map(v=>Number(v)||0));
+  const _lineValues=opt.pctLine? _lineRaw.map(v=>v/_lineMax) : _lineRaw;
+  const y2Max=opt.pctLine?(_lineMax>1?niceMax(_lineMax):1):Math.max(1,..._lineRaw.map(v=>Number(v)||0));
+  // linePct：显式控制 line 数据标签/提示按百分数还是数值展示；默认与 pctLine 一致，保持旧调用兼容
+  const linePct = opt.linePct !== undefined ? opt.linePct : opt.pctLine;
+  // pctBar 模式：bar 数据按比例（0-1）展示，左轴与数据标签都格式化为百分数
+  const valsL=niceTicks(yMaxN,4); axisY(svg,pad.l,H-pad.b,ih,valsL,valsL.map(v=>opt.pctBar?fmtPct(v,0):fmt(v,0)));
+  const valsR=niceTicks(y2Max,4); valsR.forEach(v=>{ const yy=pad.t+ih*(1-v/y2Max); const tx=svgEl('text',{x:W-pad.r+5,y:yy+3,'text-anchor':'start','font-size':10,fill:opt.line.color}); tx.textContent=opt.pctLine?fmtPct(v,0):fmt(v,0); svg.appendChild(tx); });
+  svg.appendChild(svgEl('line',{x1:W-pad.r,y1:pad.t,x2:W-pad.r,y2:H-pad.b,stroke:HRC.grid}));
+  // X 轴标签柱中心居中（v9 修复横轴错位）
+  svg.appendChild(svgEl('line',{x1:pad.l,y1:H-pad.b,x2:W-pad.r,y2:H-pad.b,stroke:HRC.grid}));
+  cats.forEach((c,i)=>{ const tx=svgEl('text',{x:pad.l+iw*(n===1?0.5:(i+0.5)/n),y:H-pad.b+16,'text-anchor':'middle','font-size':12,fill:HRC.axis}); tx.textContent=c; svg.appendChild(tx); });
+  const bw=iw*Math.min(0.5/n,0.2); const x=i=>pad.l+iw*(i+0.5)/n; const yL=v=>{ const nv=Math.min(Math.max(Number(v)||0,0),yMaxN); return pad.t+ih*(1-nv/yMaxN); }; const yR=v=>{ const nv=Math.min(Math.max(Number(v)||0,0),y2Max); return pad.t+ih*(1-nv/y2Max); };
+  opt.bar.values.forEach((v,i)=>{ if(v==null||v<=0)return; const hgt=v/yMaxN*ih; const bx=x(i)-bw/2; const r=svgEl('rect',{x:bx,y:H-pad.b-hgt,width:bw,height:Math.max(hgt,0.5),rx:3,fill:opt.bar.color,opacity:.9,'class':'cv-bar'}); r.style.animationDelay=(i*0.04)+'s';
+    r.addEventListener('mousemove',e=>showTip(container,tip,cats[i]+' · '+opt.bar.name+'：'+(opt.pctBar?fmtPct(v,1):fmt(v,0)),e)); r.addEventListener('mouseleave',()=>tip.style.opacity='0'); svg.appendChild(r); if(opt.labels && hgt>=10){ const bly=Math.max(pad.t+11, H-pad.b-hgt-7); const lb=svgEl('text',{x:x(i),y:bly,'text-anchor':'middle','font-size':12,fill:HRC.title,'font-weight':700,'stroke':HRC.bg,'stroke-width':3.5,'paint-order':'stroke','stroke-linejoin':'round'}); lb.textContent=opt.pctBar?fmtPct(v,1):fmt(v,0); svg.appendChild(lb); } });
+  const segs=[]; let cur=[]; _lineValues.forEach((v,i)=>{ if(v==null||v===0){ if(cur.length){segs.push(cur);cur=[];} } else cur.push({i,v}); }); if(cur.length)segs.push(cur);
+  segs.forEach(seg=>{ let d=''; seg.forEach((p,k)=>d+=(k?'L':'M')+x(p.i).toFixed(1)+' '+yR(p.v).toFixed(1)+' '); const path=svgEl('path',{d:d,fill:'none',stroke:opt.line.color,'stroke-width':3,'stroke-linejoin':'round','class':'cv-line'}); path.style.filter='drop-shadow(0 0 5px '+opt.line.color+'66)'; let len=0; try{len=path.getTotalLength()||0;}catch(e){} if(len){path.style.setProperty('--len',len);path.style.strokeDasharray=len;} svg.appendChild(path); });
+  _lineValues.forEach((v,i)=>{ if(v==null||v===0)return; const c=svgEl('circle',{cx:x(i),cy:yR(v),r:4.5,fill:opt.line.color,stroke:HRC.bg,'stroke-width':1.4,'class':'cv-dot'}); c.style.animationDelay=(0.3+i*0.03)+'s';
+    // tooltip/label 用原始值 _lineRaw[i]，坐标用归一化值 v
+    const rawVal=_lineRaw[i]||0;
+    c.addEventListener('mousemove',e=>showTip(container,tip,cats[i]+' · '+opt.line.name+'：'+(linePct?fmtPct(rawVal,1):fmt(rawVal,0)),e)); c.addEventListener('mouseleave',()=>tip.style.opacity='0'); svg.appendChild(c); if(opt.labels){ const py=yR(v); const _bv=opt.bar.values[i]; const _hasB=(_bv!=null&&_bv>0);
+  const _bly=_hasB? Math.max(pad.t+11, H-pad.b-(_bv/yMaxN*ih)-7) : -999;
+  const _inb=(cy,cx0)=>(cy>=pad.t+6 && cy<=H-pad.b-6 && cx0>=pad.l+4 && cx0<=pad.l+iw-4);
+  const _clash=(cy,cx0)=>(_hasB && Math.abs(cy-_bly)<14 && Math.abs(cx0-x(i))<34);
+  const _cds=[{dy:-14,dx:0},{dy:-26,dx:0},{dy:20,dx:0},{dy:32,dx:0},{dy:-12,dx:22},{dy:-12,dx:-22},{dy:22,dx:22},{dy:22,dx:-22},{dy:-40,dx:0},{dy:40,dx:0}];
+  let ly=py-14, lx=x(i), anchor='middle', _ok=false;
+  for(let ci=0;ci<_cds.length;ci++){ const cy=py+_cds[ci].dy, cx0=x(i)+_cds[ci].dx;
+    if(!_inb(cy,cx0)) continue; if(_clash(cy,cx0)) continue;
+    ly=cy; lx=cx0; anchor=Math.abs(_cds[ci].dx)>1?(_cds[ci].dx>0?'start':'end'):'middle'; _ok=true; break; }
+  if(!_ok){ ly=(Math.abs(py-14-_bly)>=14)?py-14:py+20;
+    if(ly<pad.t+6) ly=py+20; else if(ly>H-pad.b-6) ly=py-14;
+    if(_clash(ly,x(i))){ lx=x(i)+22; anchor='start'; if(lx>pad.l+iw-36){ lx=x(i)-22; anchor='end'; } } }
+  if(n>1){ if(anchor==='middle'){ if(i===0){ lx=x(0)+10; anchor='start'; } else if(i===n-1){ lx=x(n-1)-10; anchor='end'; } } }
+  lx=Math.max(pad.l+4,Math.min(pad.l+iw-4,lx));
+  const lb=svgEl('text',{x:lx,y:ly,'text-anchor':anchor,'font-size':12,fill:opt.line.color,'font-weight':700,'stroke':HRC.bg,'stroke-width':3.5,'paint-order':'stroke','stroke-linejoin':'round'}); lb.textContent=linePct?fmtPct(rawVal,1):fmt(rawVal,0); svg.appendChild(lb); } });
+  const _legItems=[{name:opt.bar.name+'（左轴·'+(opt.pctBar?'%':'数值')+'）',color:opt.bar.color},{name:opt.line.name+(linePct?'（右轴·%）':'（右轴·数值）'),color:opt.line.color}];
+  renderChartLegend(container,_legItems);
+  }
+  draw(W0);
+}
+function hbarChart(container,items,opts){
+  opts=opts||{}; const W=680,H=Math.max(160,items.length*34+40),pad={l:110,r:70,t:16,b:10};
+  markChartAnim(container);
+  container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const fmtv=opts.pct? (v=>fmtPct(v,1)) : (opts.fmt?opts.fmt : (v=>fmt(v,0)));
+  let max=Math.max(...items.map(i=>Number(i.value)||0))||1;
+  if(opts.refLine!=null && opts.refLine>max) max=Number(opts.refLine)*1.05; // 参考线高于数据时扩展轴
+  const bh=(H-pad.t-pad.b)/items.length;
+  items.forEach((it,i)=>{ const y=pad.t+i*bh; const w=(Number(it.value)||0)/max*(W-pad.l-pad.r);
+    const t1=svgEl('text',{x:pad.l-8,y:y+bh/2+4,'text-anchor':'end','font-size':12,fill:HRC.sub}); t1.textContent=it.name; svg.appendChild(t1);
+    const r=svgEl('rect',{x:pad.l,y:y+bh/2-8,width:w,height:16,rx:4,fill:it.color||'#0284c7'}); const t=svgEl('title',{}); t.textContent=it.name+'：'+fmtv(it.value); r.appendChild(t); svg.appendChild(r);
+    const t2=svgEl('text',{x:pad.l+w+6,y:y+bh/2+4,'font-size':11,fill:HRC.axis}); t2.textContent=fmtv(it.value); svg.appendChild(t2);
+  });
+  if(opts.refLine!=null){ const rx=pad.l+(Number(opts.refLine)||0)/max*(W-pad.l-pad.r);
+    svg.appendChild(svgEl('line',{x1:rx,y1:pad.t,x2:rx,y2:H-pad.b,stroke:opts.refColor||'#f97316','stroke-width':1.5,'stroke-dasharray':'5 3'}));
+    const rt=svgEl('text',{x:rx,y:pad.t-4,'text-anchor':'middle','font-size':10,fill:opts.refColor||'#f97316'}); rt.textContent=opts.refLabel||('大盘 '+fmtv(Number(opts.refLine))); svg.appendChild(rt);
+  }
+}
+function donutChart(container,items,centerTitle,centerVal){
+  const W=680,H=300; container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const cx=W/2-40,cy=H/2,r=100,ir=62; let total=0; items.forEach(i=>total+=Number(i.value)||0);
+  if(total<=0){ const t=svgEl('text',{x:cx,y:cy,'text-anchor':'middle',fill:HRC.dim,'font-size':12}); t.textContent='暂无数据'; svg.appendChild(t); return; }
+  let a0=-Math.PI/2; const colors=['#0ea5e9','#3b82f6','#22c55e','#f97316','#ef4444','#a855f7','#ec4899'];
+  items.forEach((it,i)=>{ const frac=Number(it.value)/total; const a1=a0+frac*Math.PI*2; const x0=cx+r*Math.cos(a0),y0=cy+r*Math.sin(a0),x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1); const large=frac>0.5?1:0;
+    const p=svgEl('path',{d:'M'+cx+' '+cy+' L'+x0+' '+y0+' A'+r+' '+r+' 0 '+large+' 1 '+x1+' '+y1+' Z',fill:it.color||colors[i%colors.length],opacity:.9,stroke:HRC.bg,'stroke-width':1.5}); const t=svgEl('title',{}); t.textContent=it.name+'：'+fmt(it.value,0)+' ('+fmtPct(frac,1)+')'; p.appendChild(t); svg.appendChild(p); a0=a1; });
+  svg.appendChild(svgEl('circle',{cx:cx,cy:cy,r:ir,fill:HRC.panel2}));
+  const tv=svgEl('text',{x:cx,y:cy-2,'text-anchor':'middle',fill:HRC.ink,'font-size':22,'font-weight':700}); tv.textContent=centerVal||fmt(total,0); svg.appendChild(tv);
+  const tt=svgEl('text',{x:cx,y:cy+18,'text-anchor':'middle',fill:HRC.axis,'font-size':11}); tt.textContent=centerTitle||'合计'; svg.appendChild(tt);
+  let lx=W/2+70, ly=cy-items.length*14/2; items.forEach((it,i)=>{ svg.appendChild(svgEl('rect',{x:lx,y:ly,width:10,height:10,rx:2,fill:it.color||colors[i%colors.length]})); const t2=svgEl('text',{x:lx+16,y:ly+9,'font-size':12,fill:HRC.sub}); t2.textContent=it.name+' '+fmtPct(Number(it.value)/total,1); svg.appendChild(t2); ly+=26; });
+}
+function funnelChart(container,stages){
+  const W=680,H=300; container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg); markChartAnim(container);
+  const n=stages.length; const max=Math.max(...stages.map(s=>Number(s.value)||0))||1;
+  const cx=W/2, full=W-300, gap=6, top=12;
+  const bh=(H-top*2-gap*(n-1))/n;
+  let wTop=full;
+  stages.forEach((st,i)=>{
+    const v=Number(st.value)||0;
+    const wBot=Math.max(26, full*v/max);
+    const y=top+i*(bh+gap), h=bh;
+    const poly=svgEl('polygon',{points:(cx-wTop/2)+','+y+' '+(cx+wTop/2)+','+y+' '+(cx+wBot/2)+','+(y+h)+' '+(cx-wBot/2)+','+(y+h),fill:st.color||'#0ea5e9',opacity:.92,stroke:HRC.panel2,'stroke-width':1.5,'class':'cv-bar'});
+    poly.style.animationDelay=(i*0.05)+'s';
+    const tp=svgEl('title',{}); tp.textContent=st.name+'：'+fmt(v,0)+'（占 '+fmtPct(v/max,1)+'）'; poly.appendChild(tp); svg.appendChild(poly);
+    const nm=svgEl('text',{x:cx-full/2-14,y:y+h/2+4,'text-anchor':'end','font-size':12.5,'font-weight':700,fill:HRC.title}); nm.textContent=st.name; svg.appendChild(nm);
+    const rx=cx+full/2+14;
+    const v1=svgEl('text',{x:rx,y:y+h/2-2,'text-anchor':'start','font-size':12.5,'font-weight':700,fill:HRC.ink}); v1.textContent=fmt(v,0)+' · 占 '+fmtPct(v/max,1); svg.appendChild(v1);
+    const v2=svgEl('text',{x:rx,y:y+h/2+15,'text-anchor':'start','font-size':11,fill:HRC.axis}); v2.textContent=i>0?('较上一层转化 '+fmtPct(v/((Number(stages[i-1].value)||1)),1)):'漏斗起点'; svg.appendChild(v2);
+    wTop=wBot;
+  });
+}
+function avg(a){ return a.length? a.reduce((x,y)=>x+y,0)/a.length : 0; }
+function emptyState(opt){
+  opt=opt||{};
+  const ic=opt.icon||'📊';
+  const t=esc(opt.title||'暂无数据');
+  const d=opt.desc||'';
+  return '<div class="empty-state'+(opt.sm?' sm':'')+'"><div class="es-ic">'+ic+'</div>'
+    +'<div class="es-t">'+t+'</div>'
+    +(d? '<div class="es-d">'+d+'</div>':'')+'</div>';
+}
+const VIZ_COLORS=['#0ea5e9','#3b82f6','#22c55e','#f97316','#ef4444','#a855f7','#ec4899','#14b8a6','#f59e0b'];
+function fill(sel,arr,placeholder,keep){ sel.innerHTML=''; if(placeholder!==null){ const o=document.createElement('option'); o.value=''; o.textContent=placeholder; sel.appendChild(o); } arr.forEach(v=>{ const o=document.createElement('option'); o.value=v; o.textContent=v; sel.appendChild(o); }); }
+function gapChart(container,cats,diffs,opts){
+  opts=opts||{}; const W=680,H=opts.h||340,pad={l:64,r:20,t:24,b:30};
+  markChartAnim(container);
+  container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const tip=document.createElement('div'); tip.className='cv-tip'; container.appendChild(tip);
+  const n=cats.length, iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  let mx=0; diffs.forEach(v=>{ const a=Math.abs(Number(v)||0); if(a>mx)mx=a; }); if(mx<=0)mx=1;
+  const yMax=niceMax(mx); const midY=pad.t+ih/2; const unit=(ih/2)/yMax;
+  svg.appendChild(svgEl('line',{x1:pad.l,y1:midY,x2:W-pad.r,y2:midY,stroke:HRC.grid,'stroke-width':1.2}));
+  const tl=svgEl('text',{x:pad.l,y:pad.t+6,'font-size':10,fill:HRC.axis}); tl.textContent='+'+fmt(yMax,0); svg.appendChild(tl);
+  const bl=svgEl('text',{x:pad.l,y:H-pad.b-4,'font-size':10,fill:HRC.axis}); bl.textContent='-'+fmt(yMax,0); svg.appendChild(bl);
+  // X 轴 D1-D14 时间标签（v5 用户要求）
+  axisX(svg,pad.l,H-pad.b,iw,cats);
+  const bw=iw*Math.min(0.55/n,0.32); const x=i=>pad.l+iw*(i+0.5)/n;
+  const fmtv=opts.fmt||(v=>fmt(v,0));
+  diffs.forEach((v,i)=>{
+    const val=Number(v)||0; if(val===0)return;
+    const hgt=Math.abs(val)/yMax*(ih/2);
+    const rect=svgEl('rect',{x:x(i)-bw/2,y:val>0?midY-hgt:midY,width:bw,height:Math.max(hgt,1),rx:3,fill:val>0?'#22c55e':'#ef4444',opacity:.9,'class':'cv-bar'});
+    rect.style.animationDelay=(i*0.04)+'s';
+    rect.addEventListener('mousemove',e=>showTip(container,tip,cats[i]+' 差值：'+(val>0?'+':'')+fmtv(val),e));
+    rect.addEventListener('mouseleave',()=>tip.style.opacity='0'); svg.appendChild(rect);
+    const ly=val>0?Math.max(pad.t+8,midY-hgt-4):midY+hgt+12;
+    const lb=svgEl('text',{x:x(i),y:ly,'text-anchor':'middle','font-size':10,fill:val>0?'#22c55e':'#ef4444','font-weight':700});
+    lb.textContent=(val>0?'+':'')+fmtv(val); svg.appendChild(lb);
+  });
+  renderChartLegend(container,[{name:'高于基准',color:'#22c55e'},{name:'低于基准',color:'#ef4444'}]);
+}
+function comboChartMulti(container,opt){
+  // 自适应界面：读取容器实际渲染宽度，SVG 与容器 1:1 像素对齐，边距不再随固定 viewBox 缩放失真
+  const H=opt.h||380,pad={l:74,r:84,t:36,b:40};
+  const W0=container.clientWidth||container.offsetWidth||0;
+  if(!(container.__roMulti)){ // 首次：绑定容器尺寸监听，宽度变化时重绘
+    if(typeof ResizeObserver!=='undefined'){
+      container.__roMulti=new ResizeObserver(()=>{
+        const w=container.clientWidth||0;
+        if(w>=200 && Math.abs(w-(container.__lastW||0))>2){
+          container.__lastW=w; draw(w);
+        }
+      });
+      container.__roMulti.observe(container);
+    } else {
+      container.__roMulti=true; // 环境不支持 ResizeObserver，跳过自适应
+    }
+  }
+  function draw(W){
+  if(!W||W<200) W=680; // 容器未布局时回退默认宽度
+  if(W>4000) W=4000; // 兜底：aspect-ratio 与容器固定高度冲突时宽度会被反复推导放大
+  // 动态同步容器宽高比，使 SVG 与容器 1:1 像素对齐（不再依赖写死的 680 坐标系整体缩放）
+  container.style.aspectRatio=W+'/'+H;
+  container.__lastW=container.clientWidth||W; // 记录真实宽度，避免 ResizeObserver 反复重绘
+  markChartAnim(container);
+  container.innerHTML=''; const svg=makeSvg(W,H); container.appendChild(svg);
+  const tip=document.createElement('div'); tip.className='cv-tip'; container.appendChild(tip);
+  const cats=opt.cats, n=cats.length, iw=W-pad.l-pad.r, ih=H-pad.t-pad.b;
+  const series=opt.series, sn=series.length;
+  const colors=series.map((s,i)=>s.color||VIZ_COLORS[i%VIZ_COLORS.length]);
+  // 左轴（产值柱）最大值：上浮 40% 余量，使柱整体下沉，柱顶标签落在图表中下部
+  let barMax=0; series.forEach(s=>s[opt.barKey].forEach(v=>{ barMax=Math.max(barMax,Number(v)||0); })); if(barMax<=0)barMax=1;
+  const barYMax=niceMax(barMax*1.4);
+  // 右轴（转率线）最大值：上浮 50% 余量，使线整体上浮，转率标签与产值标签在垂直方向分离
+  let lineMax=0; series.forEach(s=>s[opt.lineKey].forEach(v=>{ lineMax=Math.max(lineMax,Number(v)||0); })); if(lineMax<=0)lineMax=1;
+  const lineYMax=lineMax>1?niceMax(lineMax*1.5):niceMax(Math.min(1,lineMax)*1.5);
+  // 左轴刻度
+  const valsL=niceTicks(barYMax,4); axisY(svg,pad.l,H-pad.b,ih,valsL,valsL.map(v=>fmt(v,0)));
+  // 右轴刻度（百分比）
+  const valsR=niceTicks(lineYMax,4); valsR.forEach(v=>{ const yy=pad.t+ih*(1-v/lineYMax); const tx=svgEl('text',{x:W-pad.r+5,y:yy+3,'text-anchor':'start','font-size':10,fill:HRC.axis}); tx.textContent=fmtPct(v,0); svg.appendChild(tx); });
+  svg.appendChild(svgEl('line',{x1:W-pad.r,y1:pad.t,x2:W-pad.r,y2:H-pad.b,stroke:HRC.grid}));
+  // X 轴
+  svg.appendChild(svgEl('line',{x1:pad.l,y1:H-pad.b,x2:W-pad.r,y2:H-pad.b,stroke:HRC.grid}));
+  cats.forEach((c,i)=>{ const tx=svgEl('text',{x:pad.l+iw*(n===1?0.5:(i+0.5)/n),y:H-pad.b+20,'text-anchor':'middle','font-size':12,fill:HRC.axis}); tx.textContent=c; svg.appendChild(tx); });
+  // 分组柱：每天内按系列分柱
+  const groupW=iw*Math.min(0.8/n,0.5); const bw=Math.max(groupW/sn-2,1);
+  const xC=i=>pad.l+iw*(n===1?0.5:(i+0.5)/n);
+  const yL=v=>{ const nv=Math.min(Math.max(Number(v)||0,0),barYMax); return pad.t+ih*(1-nv/barYMax); };
+  const yR=v=>{ const nv=Math.min(Math.max(Number(v)||0,0),lineYMax); return pad.t+ih*(1-nv/lineYMax); };
+  // 数据标签字号：与同界面分日差值图(gapChart)一致，固定 10px，不再自适应
+  const lblFz = 10;
+  series.forEach((s,si)=>{
+    s[opt.barKey].forEach((v,i)=>{
+      if(v==null||v<=0)return;
+      const hgt=v/barYMax*ih;
+      const bx=xC(i)-groupW/2+si*bw;
+      const r=svgEl('rect',{x:bx,y:H-pad.b-hgt,width:Math.max(bw-1,0.5),height:Math.max(hgt,0.5),rx:2,fill:colors[si],opacity:.9,'class':'cv-bar'});
+      r.style.animationDelay=(i*0.03+si*0.02)+'s';
+      svg.appendChild(r);
+      // 柱体内部数值标签（避免与转率点标签重叠）
+      if(hgt>=10){
+        const bly=Math.max(pad.t+11, H-pad.b-hgt-6);
+        const lb=svgEl('text',{x:bx+(bw-1)/2,y:bly,'text-anchor':'middle','font-size':lblFz,fill:HRC.title,'font-weight':700,'stroke':HRC.bg,'stroke-width':3.5,'paint-order':'stroke','stroke-linejoin':'round'});
+        lb.textContent=fmt(v,0); svg.appendChild(lb);
+      }
+    });
+  });
+  // 多线（转率）+ 数据点标签
+  series.forEach((s,si)=>{
+    const vals=s[opt.lineKey];
+    const segs=[]; let cur=[];
+    vals.forEach((v,i)=>{ if(v==null||v===0){ if(cur.length){segs.push(cur);cur=[];} } else cur.push({i,v}); }); if(cur.length)segs.push(cur);
+    segs.forEach(seg=>{
+      let d=seg.map((p,k)=>(k?'L':'M')+xC(p.i).toFixed(1)+' '+yR(p.v).toFixed(1)).join(' ');
+      const path=svgEl('path',{d:d,fill:'none',stroke:colors[si],'stroke-width':2.6,'stroke-linejoin':'round','stroke-linecap':'round','class':'cv-line'});
+      path.style.filter='drop-shadow(0 0 5px '+colors[si]+'66)';
+      let len=0; try{len=path.getTotalLength()||0;}catch(e){} if(len){path.style.setProperty('--len',len);path.style.strokeDasharray=len;}
+      svg.appendChild(path);
+    });
+    vals.forEach((v,i)=>{
+      if(v==null||v===0)return;
+      const c=svgEl('circle',{cx:xC(i),cy:yR(v),r:3.6,fill:colors[si],stroke:HRC.bg,'stroke-width':1.2,'class':'cv-dot'});
+      c.style.animationDelay=(0.3+i*0.03)+'s';
+      svg.appendChild(c);
+      // 点上方转率标签（适度抬高；接近顶部时放到点下方；首末点与 Y 轴保持间距）
+      const py=yR(v); let ly=py-12; if(ly < pad.t+6) ly=py+14; else if(ly > H-pad.b-6) ly=py-12;
+      let lx=xC(i), anchor='middle'; if(n>1){ if(i===0){ lx=xC(0)+10; anchor='start'; } else if(i===n-1){ lx=xC(n-1)-10; anchor='end'; } lx=Math.max(pad.l+4,Math.min(pad.l+iw-4,lx)); }
+      const lb=svgEl('text',{x:lx,y:ly,'text-anchor':anchor,'font-size':lblFz,fill:colors[si],'font-weight':700,'stroke':HRC.bg,'stroke-width':3.5,'paint-order':'stroke','stroke-linejoin':'round'});
+      lb.textContent=fmtPct(v,1); svg.appendChild(lb);
+    });
+  });
+  // 天级热区：悬停时 tooltip 展示当天所有营期数据
+  const dayW=iw/n;
+  cats.forEach((c,i)=>{
+    const hx=pad.l+iw*(n===1?0:(i/n));
+    const hw=n===1?iw:dayW;
+    const hot=svgEl('rect',{x:hx,y:pad.t,width:hw,height:ih,fill:HRC.bg,opacity:0,'class':'cv-hot'});
+    hot.addEventListener('mousemove',e=>{
+      const rows=series.map((s,si)=>{
+        const v=s[opt.barKey][i]; const r=s[opt.lineKey][i];
+        return '<div style="display:flex;align-items:center;gap:6px;margin:2px 0"><i style="width:9px;height:9px;border-radius:2px;background:'+colors[si]+';display:inline-block"></i><b>'+esc(s.name)+'</b>：产值 '+fmt(v,0)+' 元 · 转率 '+fmtPct(r,1)+'</div>';
+      }).join('');
+      showTip(container,tip,'<div style="font-weight:700;margin-bottom:4px;color:#0ea5e9">'+c+'（'+(opt.tipMode||'累计')+'）· 全部营期</div>'+rows,e);
+    });
+    hot.addEventListener('mouseleave',()=>tip.style.opacity='0');
+    svg.appendChild(hot);
+  });
+  // 图例
+  const items=series.map((s,i)=>({name:s.name,color:colors[i]}));
+  renderChartLegend(container,items);
+  }
+  container.__lastW=W0; draw(W0);
+}
+let SVC_RAMP_BAD = [[0,255,237,213],[0.5,251,146,60],[1,194,65,12]];
+let SVC_RAMP_GOOD = [[0,239,246,255],[0.5,191,219,254],[1,96,165,250]];
+function svcRamp(bad,t){
+  const st=bad?SVC_RAMP_BAD:SVC_RAMP_GOOD;
+  t=Math.max(0,Math.min(1,t||0));
+  for(let i=1;i<st.length;i++){
+    if(t<=st[i][0]){
+      const a=st[i-1], b=st[i], k=(t-a[0])/((b[0]-a[0])||1);
+      return [Math.round(a[1]+(b[1]-a[1])*k), Math.round(a[2]+(b[2]-a[2])*k), Math.round(a[3]+(b[3]-a[3])*k)];
+    }
+  }
+  const e=st[st.length-1]; return [e[1],e[2],e[3]];
+}
+function svcRgbCss(c){ return 'rgb('+c[0]+','+c[1]+','+c[2]+')'; }
+function svcRelLum(c){ const f=v=>{ v/=255; return v<=0.03928? v/12.92 : Math.pow((v+0.055)/1.055,2.4); };
+  return 0.2126*f(c[0])+0.7152*f(c[1])+0.0722*f(c[2]); }
+function svcCellBg(v,bad,lo,hi){
+  if(v==null) return null;
+  let t=0.5;
+  const span=(hi==null||lo==null)?0:(hi-lo);
+  if(span>1e-9) t=(v-lo)/span;
+  const c=svcRamp(bad,t);
+  return {bg:svcRgbCss(c), fg:(svcRelLum(c)<0.206?HRC.bg:HRC.ink)};
+}
+/* 锚点导航（源平台未绑定，这里补齐） */
+function hrBindAnchor(){
+  var nav=$('#hrAnchorNav'); if(!nav) return;
+  $$('#hrAnchorNav [data-anchor]').forEach(function(b){
+    b.onclick=function(){
+      $$('#hrAnchorNav [data-anchor]').forEach(function(x){ x.classList.toggle('on', x===b); });
+      var t=document.getElementById(b.getAttribute('data-anchor'));
+      if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+    };
+  });
+}
+function hrRender(){ try{ renderHr(); hrBindAnchor(); }catch(e){ console.error('[人力数据]', e); } }
+window.__HR_RENDER__=hrRender;
+window.__HR_APP__={ver:'hr1', hrc:function(){return HRC;}, calls:0,
+  theme:function(light){ this.calls++; hrSetTheme(!!light); if(document.getElementById('mod-hr')) hrRender(); }};
+hrSetTheme(document.body && document.body.classList.contains('theme-light'));
+})();
 </script>
 </body>
 </html>    <div class="main" id="content">
